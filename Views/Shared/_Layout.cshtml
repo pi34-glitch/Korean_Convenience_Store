@@ -26,13 +26,18 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
-                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    @using Microsoft.AspNetCore.Http
+                    @{
+                        var nombreUsuario = Context.Session.GetString("NombreUsuario");
+                        var rolUsuario = Context.Session.GetString("Rol");
+                    }
+                    @if (!string.IsNullOrEmpty(nombreUsuario))
                     {
                         <form method="post" asp-controller="Account" asp-action="Logout" style="display:inline;">
                             @Html.AntiForgeryToken()
                             <span style="color:#4B5563; margin-right:12px;">
-                                👤 @User.Identity.Name
-                                <small style="color:#E60000;">(@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)</small>
+                                👤 @nombreUsuario
+                                <small style="color:#E60000;">(@rolUsuario)</small>
                             </span>
                             <button type="submit" style="
                                 background:#E60000;

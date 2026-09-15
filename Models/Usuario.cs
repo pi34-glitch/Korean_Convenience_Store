@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Korean_Convenience_Store.Models
 {
     public class Usuario
@@ -27,6 +25,9 @@ namespace Korean_Convenience_Store.Models
 
         public bool Activo { get; set; } = true;
 
-        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+        // ===== Navegación (se llenará en fases siguientes) =====
+        public ICollection<Resena> Resenas { get; set; } = new List<Resena>();
+        public ICollection<Carrito> Carritos { get; set; } = new List<Carrito>();
+        public ICollection<Venta> Ventas { get; set; } = new List<Venta>();
     }
 }
