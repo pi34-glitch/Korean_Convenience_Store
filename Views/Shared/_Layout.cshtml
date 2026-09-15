@@ -26,6 +26,26 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <form method="post" asp-controller="Account" asp-action="Logout" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <span style="color:#4B5563; margin-right:12px;">
+                                👤 @User.Identity.Name
+                                <small style="color:#E60000;">(@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)</small>
+                            </span>
+                            <button type="submit" style="
+                                background:#E60000;
+                                color:white;
+                                border:none;
+                                padding:8px 16px;
+                                border-radius:6px;
+                                cursor:pointer;
+                                font-weight:600;">
+                                Cerrar sesión
+                            </button>
+                        </form>
+                    }
                 </div>
             </div>
         </nav>
