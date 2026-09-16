@@ -9,51 +9,51 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Korean_Convenience_Store
 build_property.RootNamespace = Korean_Convenience_Store
-build_property.ProjectDir = C:\Users\USUARIO\Proyecto_Sept_2026\Korean_Convenience_Store\
+build_property.ProjectDir = /home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\USUARIO\Proyecto_Sept_2026\Korean_Convenience_Store
+build_property.MSBuildProjectDirectory = /home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/USUARIO/Proyecto_Sept_2026/Korean_Convenience_Store/Views/Account/AccesoDenegado.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxBY2Nlc29EZW5lZ2Fkby5jc2h0bWw=
+[/home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/Views/Account/AccesoDenegado.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9BY2Nlc29EZW5lZ2Fkby5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/USUARIO/Proyecto_Sept_2026/Korean_Convenience_Store/Views/Account/Login.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+[/home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Mb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/USUARIO/Proyecto_Sept_2026/Korean_Convenience_Store/Views/Cajero/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FqZXJvXEluZGV4LmNzaHRtbA==
+[/home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/Views/Cajero/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2FqZXJvL0luZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/USUARIO/Proyecto_Sept_2026/Korean_Convenience_Store/Views/Home/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+[/home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/USUARIO/Proyecto_Sept_2026/Korean_Convenience_Store/Views/Home/Privacy.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+[/home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/USUARIO/Proyecto_Sept_2026/Korean_Convenience_Store/Views/Shared/Error.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+[/home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0Vycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/USUARIO/Proyecto_Sept_2026/Korean_Convenience_Store/Views/Shared/_ValidationScriptsPartial.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+[/home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/USUARIO/Proyecto_Sept_2026/Korean_Convenience_Store/Views/_ViewImports.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+[/home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/USUARIO/Proyecto_Sept_2026/Korean_Convenience_Store/Views/_ViewStart.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+[/home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/USUARIO/Proyecto_Sept_2026/Korean_Convenience_Store/Views/Shared/_Layout.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = b-ujzc6bhzmm
+[/home/auguntu/practicas_aug/programacion web/Nose/Korean_Convenience_Store/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-ijfaib40hl
