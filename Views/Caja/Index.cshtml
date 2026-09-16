@@ -1,0 +1,383 @@
+@model List<Korean_Convenience_Store.Models.Producto>
+
+@{
+    ViewData["Title"] = "Caja - Selección de Productos";
+}
+
+<style>
+    :root {
+        --rojo-bekeenco: #DC2626;
+        --rojo-hover: #B91C1C;
+        --blanco-puro: #FFFFFF;
+        --gris-fondo: #F9FAFB;
+        --negro-texto: #111827;
+        --gris-texto: #4B5563;
+    }
+
+    body {
+        background-color: var(--gris-fondo);
+        font-family: 'Segoe UI', 'Korean Modern', sans-serif;
+    }
+
+    .header-caja {
+        background-color: var(--blanco-puro);
+        padding: 1rem 2rem;
+        border-bottom: 3px solid var(--rojo-bekeenco);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-caja h1 {
+        color: var(--rojo-bekeenco);
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .categoria-titulo {
+        color: var(--negro-texto);
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin: 1.5rem 0 0.8rem 0;
+        padding-left: 0.5rem;
+        border-left: 5px solid var(--rojo-bekeenco);
+    }
+
+    .grilla-productos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+
+    .tarjeta-producto {
+        background-color: var(--blanco-puro);
+        border: 1px solid #E5E7EB;
+        border-radius: 12px;
+        padding: 1rem;
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .tarjeta-producto:hover {
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .tarjeta-producto .nombre {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--negro-texto);
+        margin-bottom: 0.3rem;
+    }
+
+    .tarjeta-producto .categoria {
+        font-size: 0.75rem;
+        color: var(--gris-texto);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .tarjeta-producto .precio {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--rojo-bekeenco);
+        margin-bottom: 0.3rem;
+    }
+
+    .tarjeta-producto .stock {
+        font-size: 0.8rem;
+        color: var(--gris-texto);
+        margin-bottom: 0.8rem;
+    }
+
+    .controles {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .btn-control {
+        background-color: var(--rojo-bekeenco);
+        color: var(--blanco-puro);
+        border: none;
+        border-radius: 8px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-control:hover {
+        background-color: var(--rojo-hover);
+    }
+
+    .btn-control:disabled {
+        background-color: #D1D5DB;
+        cursor: not-allowed;
+    }
+
+    .contador {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--negro-texto);
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .panel-ticket {
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: 340px;
+        height: 100vh;
+        background-color: var(--blanco-puro);
+        border-left: 3px solid var(--rojo-bekeenco);
+        padding: 1.5rem;
+        overflow-y: auto;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.08);
+    }
+
+    .panel-ticket h2 {
+        color: var(--rojo-bekeenco);
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #E5E7EB;
+        padding-bottom: 0.5rem;
+    }
+
+    .item-ticket {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px dashed #E5E7EB;
+        font-size: 0.9rem;
+    }
+
+    .item-ticket .nombre-item {
+        color: var(--negro-texto);
+        font-weight: 500;
+    }
+
+    .item-ticket .subtotal-item {
+        color: var(--gris-texto);
+        font-weight: 600;
+    }
+
+    .total-ticket {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--rojo-bekeenco);
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 3px solid var(--rojo-bekeenco);
+    }
+
+    .btn-cancelar {
+        background-color: #6B7280;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.8rem;
+        width: 100%;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 1rem;
+    }
+
+    .btn-cancelar:hover {
+        background-color: #4B5563;
+    }
+
+    .contenido-principal {
+        margin-right: 360px;
+        padding: 1rem;
+    }
+</style>
+
+<div class="contenido-principal">
+    <div class="header-caja">
+        <h1>🍜 BekeenCo - Caja</h1>
+        <span style="color: var(--gris-texto);">Selección por Unidad</span>
+    </div>
+
+    @{
+        var categorias = Model.Select(p => p.Categoria).Distinct().OrderBy(c => c);
+    }
+
+    @foreach (var categoria in categorias)
+    {
+        <h2 class="categoria-titulo">@categoria</h2>
+        <div class="grilla-productos">
+            @foreach (var producto in Model.Where(p => p.Categoria == categoria))
+            {
+                <div class="tarjeta-producto"
+                     data-id="@producto.Id"
+                     data-nombre="@producto.Nombre"
+                     data-precio="@producto.PrecioVenta.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                     data-stock="@producto.StockActual">
+                    <div>
+                        <div class="nombre">@producto.Nombre</div>
+                        <div class="categoria">@producto.Categoria</div>
+                        <div class="precio">Bs. @producto.PrecioVenta.ToString("F2")</div>
+                        <div class="stock">Stock: @producto.StockActual unidades</div>
+                    </div>
+                    <div class="controles">
+                        <button class="btn-control btn-restar" onclick="restarProducto(@producto.Id)" disabled>−</button>
+                        <span class="contador" id="contador-@producto.Id">0</span>
+                        <button class="btn-control btn-sumar" onclick="sumarProducto(@producto.Id)">+</button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Panel de Resumen del Ticket -->
+<div class="panel-ticket">
+    <h2>🧾 Resumen del Ticket</h2>
+    <div id="lista-items">
+        <p style="color: var(--gris-texto); font-size: 0.9rem;">No hay productos seleccionados.</p>
+    </div>
+    <div class="total-ticket">
+        <span>TOTAL:</span>
+        <span id="total-general">Bs. 0.00</span>
+    </div>
+    <button class="btn-cancelar" onclick="cancelarTicket()">🗑️ Cancelar Ticket</button>
+</div>
+
+@section Scripts {
+    <script>
+        let carrito = {};
+
+        function sumarProducto(id) {
+            const tarjeta = document.querySelector(`.tarjeta-producto[data-id="${id}"]`);
+            const nombre = tarjeta.dataset.nombre;
+            const precio = parseFloat(tarjeta.dataset.precio);
+            const stock = parseInt(tarjeta.dataset.stock);
+
+            if (!carrito[id]) {
+                carrito[id] = { nombre, precio, cantidad: 0, stock };
+            }
+
+            if (carrito[id].cantidad >= stock) {
+                alert(`⚠️ Stock insuficiente para "${nombre}". Solo hay ${stock} unidades.`);
+                return;
+            }
+
+            carrito[id].cantidad++;
+            actualizarUI(id);
+            actualizarTicket();
+            validarStockEnServidor(id, carrito[id].cantidad);
+        }
+
+        function restarProducto(id) {
+            if (!carrito[id] || carrito[id].cantidad <= 0) return;
+
+            carrito[id].cantidad--;
+
+            if (carrito[id].cantidad === 0) {
+                delete carrito[id];
+            }
+
+            actualizarUI(id);
+            actualizarTicket();
+        }
+
+        function actualizarUI(id) {
+            const contador = document.getElementById(`contador-${id}`);
+            const tarjeta = document.querySelector(`.tarjeta-producto[data-id="${id}"]`);
+            const btnRestar = tarjeta.querySelector('.btn-restar');
+            const btnSumar = tarjeta.querySelector('.btn-sumar');
+
+            const cantidad = carrito[id] ? carrito[id].cantidad : 0;
+            const stock = parseInt(tarjeta.dataset.stock);
+
+            contador.textContent = cantidad;
+            btnRestar.disabled = cantidad === 0;
+            btnSumar.disabled = cantidad >= stock;
+        }
+
+        function actualizarTicket() {
+            const listaItems = document.getElementById('lista-items');
+            const totalGeneral = document.getElementById('total-general');
+
+            const items = Object.values(carrito);
+
+            if (items.length === 0) {
+                listaItems.innerHTML = '<p style="color: var(--gris-texto); font-size: 0.9rem;">No hay productos seleccionados.</p>';
+                totalGeneral.textContent = 'Bs. 0.00';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            for (const item of items) {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                html += `
+                    <div class="item-ticket">
+                        <span class="nombre-item">${item.cantidad}x ${item.nombre}</span>
+                        <span class="subtotal-item">Bs. ${subtotal.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+
+            listaItems.innerHTML = html;
+            totalGeneral.textContent = `Bs. ${total.toFixed(2)}`;
+        }
+
+        function cancelarTicket() {
+            if (Object.keys(carrito).length === 0) {
+                alert('El ticket ya está vacío.');
+                return;
+            }
+
+            if (!confirm('¿Estás seguro de cancelar el ticket actual?')) return;
+
+            carrito = {};
+
+            document.querySelectorAll('.tarjeta-producto').forEach(tarjeta => {
+                const id = tarjeta.dataset.id;
+                actualizarUI(id);
+            });
+
+            actualizarTicket();
+        }
+
+        async function validarStockEnServidor(productoId, cantidad) {
+            try {
+                const response = await fetch('/Caja/ValidarStock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productoId: productoId, cantidad: cantidad })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    alert(`⚠️ ${data.message}`);
+                    if (carrito[productoId]) {
+                        carrito[productoId].cantidad--;
+                        if (carrito[productoId].cantidad <= 0) delete carrito[productoId];
+                        actualizarUI(productoId);
+                        actualizarTicket();
+                    }
+                }
+            } catch (error) {
+                console.error('Error al validar stock en el servidor:', error);
+            }
+        }
+    </script>
+}

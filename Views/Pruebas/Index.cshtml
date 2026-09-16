@@ -1,0 +1,150 @@
+@model List<Korean_Convenience_Store.Controllers.CalculoProducto>
+
+@{
+    ViewData["Title"] = "Cálculo por Unidad";
+    decimal totalGeneral = Model.Sum(p => p.Subtotal);
+}
+
+<style>
+    body {
+        background-color: #F9FAFB;
+        font-family: 'Segoe UI', sans-serif;
+        padding: 2rem;
+    }
+
+    .header {
+        background-color: #FFFFFF;
+        border-left: 6px solid #DC2626;
+        border-radius: 12px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .header h1 {
+        color: #DC2626;
+        margin: 0 0 0.5rem 0;
+        font-size: 1.8rem;
+    }
+
+    .header p {
+        color: #4B5563;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .ecuacion {
+        background-color: #FFFFFF;
+        border: 2px dashed #DC2626;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .ecuacion span {
+        color: #DC2626;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #FFFFFF;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    thead {
+        background-color: #DC2626;
+        color: #FFFFFF;
+    }
+
+    th, td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #E5E7EB;
+    }
+
+    th {
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    td {
+        color: #111827;
+        font-size: 0.95rem;
+    }
+
+    .col-producto { font-weight: 600; }
+    .col-monto { font-family: 'Courier New', monospace; text-align: right; }
+
+    tfoot td {
+        background-color: #FEF2F2;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #DC2626;
+        border-top: 3px solid #DC2626;
+    }
+
+    .nota {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background-color: #FEF3C7;
+        border-left: 4px solid #F59E0B;
+        border-radius: 8px;
+        color: #78350F;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="header">
+    <h1>🧮 Cálculo por Precio Unitario — HU-04</h1>
+    <p>Verificación del cálculo de subtotales según precio unitario y cantidad seleccionada</p>
+</div>
+
+<div class="ecuacion">
+    <strong>Subtotal =</strong> <span>Precio Unitario</span> × <span>Cantidad</span>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Producto</th>
+            <th>Precio Unitario</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ var i = 1; }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@i</td>
+                <td class="col-producto">@item.Producto</td>
+                <td class="col-monto">Bs. @item.PrecioUnitario.ToString("F2")</td>
+                <td class="col-monto">@item.Cantidad</td>
+                <td class="col-monto"><strong>Bs. @item.Subtotal.ToString("F2")</strong></td>
+            </tr>
+            i++;
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4" style="text-align: right;">TOTAL:</td>
+            <td class="col-monto">Bs. @totalGeneral.ToString("F2")</td>
+        </tr>
+    </tfoot>
+</table>
+
+<div class="nota">
+    <strong>📌 Nota:</strong> Cada subtotal se calcula multiplicando el <em>precio unitario</em> por la <em>cantidad</em> seleccionada. 
+    Este cálculo es el que se ejecuta en tiempo real en la vista de Caja (<code>/Caja/Index</code>) al presionar los botones [+] y [−].
+</div>
