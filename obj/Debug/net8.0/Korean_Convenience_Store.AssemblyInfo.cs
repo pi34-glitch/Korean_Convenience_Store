@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Korean_Convenience_Store")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+40a5f47fae63be0d5ddee1ccc4a35e623dbfb935")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2da8724fa33bbd2d63694ea7e6763da089885d25")]
 [assembly: System.Reflection.AssemblyProductAttribute("Korean_Convenience_Store")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Korean_Convenience_Store")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
