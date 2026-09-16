@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\HP\\Documents\\programacion_web_dos\\Korean_Convenience_Store\\Korean_Convenience_Store.csproj": {}
+    "C:\\Users\\USUARIO\\Proyecto_Sept_2026\\Korean_Convenience_Store\\Korean_Convenience_Store.csproj": {}
   },
   "projects": {
-    "C:\\Users\\HP\\Documents\\programacion_web_dos\\Korean_Convenience_Store\\Korean_Convenience_Store.csproj": {
+    "C:\\Users\\USUARIO\\Proyecto_Sept_2026\\Korean_Convenience_Store\\Korean_Convenience_Store.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\HP\\Documents\\programacion_web_dos\\Korean_Convenience_Store\\Korean_Convenience_Store.csproj",
+        "projectUniqueName": "C:\\Users\\USUARIO\\Proyecto_Sept_2026\\Korean_Convenience_Store\\Korean_Convenience_Store.csproj",
         "projectName": "Korean_Convenience_Store",
-        "projectPath": "C:\\Users\\HP\\Documents\\programacion_web_dos\\Korean_Convenience_Store\\Korean_Convenience_Store.csproj",
-        "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\HP\\Documents\\programacion_web_dos\\Korean_Convenience_Store\\obj\\",
+        "projectPath": "C:\\Users\\USUARIO\\Proyecto_Sept_2026\\Korean_Convenience_Store\\Korean_Convenience_Store.csproj",
+        "packagesPath": "C:\\Users\\USUARIO\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\USUARIO\\Proyecto_Sept_2026\\Korean_Convenience_Store\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\USUARIO\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -31,7 +31,6 @@
         },
         "frameworks": {
           "net8.0": {
-            "framework": "net8.0",
             "targetAlias": "net8.0",
             "projectReferences": {}
           }
@@ -45,12 +44,10 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.400"
+        }
       },
       "frameworks": {
         "net8.0": {
-          "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
@@ -87,7 +84,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.425/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

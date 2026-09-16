@@ -56,13 +56,19 @@ namespace Korean_Convenience_Store.Controllers
                 return View();
             }
 
-            // ===== Guardar datos en la SESIÓN (en lugar de Claims) =====
+            // ===== Guardar datos en la SESIÓN =====
             HttpContext.Session.SetInt32("IdUsuario", usuario.Id);
             HttpContext.Session.SetString("NombreUsuario", usuario.NombreUsuario);
             HttpContext.Session.SetString("Email", usuario.Email);
             HttpContext.Session.SetString("Rol", usuario.Rol.ToString());
 
-            return RedirectToAction("Index", "Home");
+            // ===== Redirección por ROL (HU-02) =====
+            return usuario.Rol switch
+            {
+                RolUsuario.Cajero => RedirectToAction("Index", "Cajero"),
+                RolUsuario.Administrador => RedirectToAction("Index", "Home"),
+                _ => RedirectToAction("Index", "Home")
+            };
         }
 
         // POST: /Account/Logout
