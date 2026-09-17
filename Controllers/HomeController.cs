@@ -1,32 +1,36 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using Korean_Convenience_Store.Filters;
 using Korean_Convenience_Store.Models;
-using Microsoft.AspNetCore.Authorization;
-namespace Korean_Convenience_Store.Controllers;
-// nuevo
-[Authorize]
-public class HomeController : Controller
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+
+namespace Korean_Convenience_Store.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    [RolRequerido] // ← sin roles = cualquier usuario logueado
+    public class HomeController : Controller
     {
-        _logger = logger;
-    }
+        private readonly ILogger<HomeController> _logger;
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+        public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        public IActionResult Index()
+        {
+            ViewBag.NombreUsuario = HttpContext.Session.GetString("NombreUsuario");
+            ViewBag.Rol = HttpContext.Session.GetString("Rol");
+            return View();
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }

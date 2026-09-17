@@ -1,11 +1,8 @@
 using Korean_Convenience_Store.Data;
 using Korean_Convenience_Store.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace Korean_Convenience_Store.Controllers
 {
@@ -24,8 +21,8 @@ namespace Korean_Convenience_Store.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            // Si ya está autenticado, redirigir al home
-            if (User.Identity != null && User.Identity.IsAuthenticated)
+            // Si ya hay sesión, ir al Home
+            if (HttpContext.Session.GetInt32("IdUsuario") != null)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -53,52 +50,41 @@ namespace Korean_Convenience_Store.Controllers
             }
 
             var resultado = _hasher.VerifyHashedPassword(usuario, usuario.PasswordHash, password);
-
             if (resultado == PasswordVerificationResult.Failed)
             {
                 ViewBag.Error = "Credenciales incorrectas";
                 return View();
             }
 
-            // Rehash automático si el algoritmo cambió
-            if (resultado == PasswordVerificationResult.SuccessRehashNeeded)
-            {
-                usuario.PasswordHash = _hasher.HashPassword(usuario, password);
-                await _context.SaveChangesAsync();
-            }
+            // ===== Guardar datos en la SESIÓN =====
+            HttpContext.Session.SetInt32("IdUsuario", usuario.Id);
+            HttpContext.Session.SetString("NombreUsuario", usuario.NombreUsuario);
+            HttpContext.Session.SetString("Email", usuario.Email);
+            HttpContext.Session.SetString("Rol", usuario.Rol.ToString());
 
-            // Construir los Claims
-            var claims = new List<Claim>
+            // ===== Redirección por ROL (HU-02) =====
+            return usuario.Rol switch
             {
-                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-                new Claim(ClaimTypes.Name, usuario.NombreUsuario),
-                new Claim(ClaimTypes.Email, usuario.Email),
-                new Claim(ClaimTypes.Role, usuario.Rol.ToString())
+                RolUsuario.Cajero => RedirectToAction("Index", "Cajero"),
+                RolUsuario.Administrador => RedirectToAction("Index", "Home"),
+                _ => RedirectToAction("Index", "Home")
             };
-
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal,
-                new AuthenticationProperties
-                {
-                    IsPersistent = false,
-                    ExpiresUtc = DateTime.UtcNow.AddHours(2)
-                });
-
-            // Redirigir según rol (por ahora ambos van a Home/Index)
-            return RedirectToAction("Index", "Home");
         }
 
         // POST: /Account/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
             return RedirectToAction("Login", "Account");
+        }
+
+        // GET: /Account/AccesoDenegado
+        [HttpGet]
+        public IActionResult AccesoDenegado()
+        {
+            return View();
         }
     }
 }

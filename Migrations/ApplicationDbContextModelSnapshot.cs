@@ -22,7 +22,125 @@ namespace Korean_Convenience_Store.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Carrito", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_carrito");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("CantidadGramo")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("CantidadGramo");
+
+                    b.Property<int>("CantidadUnitario")
+                        .HasColumnType("integer")
+                        .HasColumnName("CantidadUnitario");
+
+                    b.Property<int>("IdProducto")
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_producto");
+
+                    b.Property<int>("IdUser")
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_user");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("Subtotal");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdProducto");
+
+                    b.HasIndex("IdUser");
+
+                    b.ToTable("Carrito", (string)null);
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.DetalleVenta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_detalle");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("CantidadOGramos")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("Cantidad_o_gramos");
+
+                    b.Property<int>("IdProducto")
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_producto");
+
+                    b.Property<int>("IdVenta")
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_venta");
+
+                    b.Property<decimal>("PrecioAplicado")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("Precio_aplicado");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("Subtotal");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdProducto");
+
+                    b.HasIndex("IdVenta");
+
+                    b.ToTable("DetalleVenta", (string)null);
+                });
+
             modelBuilder.Entity("Korean_Convenience_Store.Models.Producto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_producto");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IdProveedor")
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_proveedor");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<decimal>("PrecioUnitario")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("Precio_unitario");
+
+                    b.Property<decimal>("StockActual")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("Stock_actual");
+
+                    b.Property<decimal>("StockMinimo")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("Stock_minimo");
+
+                    b.Property<string>("TipoVenta")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Tipo_venta");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdProveedor");
+
+                    b.ToTable("Productos", (string)null);
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Proveedor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,83 +148,60 @@ namespace Korean_Convenience_Store.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Categoria")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<string>("Contacto")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Direccion")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<decimal>("PrecioVenta")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("StockActual")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StockSeguridad")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TipoCobro")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<string>("Telefono")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Productos", (string)null);
+                    b.ToTable("Proveedores", (string)null);
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 100,
-                            Categoria = "Fideos",
-                            Nombre = "Ramen Samyang 140g",
-                            PrecioVenta = 8.50m,
-                            StockActual = 20,
-                            StockSeguridad = 5,
-                            TipoCobro = "Unidad"
-                        },
-                        new
-                        {
-                            Id = 101,
-                            Categoria = "Bebidas",
-                            Nombre = "Bebida Milkis 250ml",
-                            PrecioVenta = 6.00m,
-                            StockActual = 15,
-                            StockSeguridad = 5,
-                            TipoCobro = "Unidad"
-                        },
-                        new
-                        {
-                            Id = 102,
-                            Categoria = "Snacks",
-                            Nombre = "Snack Pocky Chocolate",
-                            PrecioVenta = 5.50m,
-                            StockActual = 25,
-                            StockSeguridad = 5,
-                            TipoCobro = "Unidad"
-                        },
-                        new
-                        {
-                            Id = 103,
-                            Categoria = "Caldos",
-                            Nombre = "Tteokbokki Picante",
-                            PrecioVenta = 12.00m,
-                            StockActual = 10,
-                            StockSeguridad = 3,
-                            TipoCobro = "Unidad"
-                        },
-                        new
-                        {
-                            Id = 104,
-                            Categoria = "Bebidas",
-                            Nombre = "Soju Original 360ml",
-                            PrecioVenta = 18.00m,
-                            StockActual = 8,
-                            StockSeguridad = 2,
-                            TipoCobro = "Unidad"
-                        });
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Resena", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Calificacion")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Comentario")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("IdProducto")
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_producto");
+
+                    b.Property<int>("IdUser")
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_user");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdProducto");
+
+                    b.HasIndex("IdUser");
+
+                    b.ToTable("Resenas", (string)null);
                 });
 
             modelBuilder.Entity("Korean_Convenience_Store.Models.Usuario", b =>
@@ -118,15 +213,14 @@ namespace Korean_Convenience_Store.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Activo")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NombreUsuario")
                         .IsRequired()
@@ -154,9 +248,8 @@ namespace Korean_Convenience_Store.Migrations
                             Id = 1,
                             Activo = true,
                             Email = "admin@bekeenco.com",
-                            FechaCreacion = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             NombreUsuario = "Kim Joung",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAy+TwyNxBP60uI529mx6i7VYumar2q1oIHcjrrE1pJVUzQ+fLTPYMtXBhbmfkjsDg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDRcR/4rK00i72xa9wLi4kH83WAexWl4n7pHLT3pnq+rHIX9a7/2IwK9UEFDA2aGcw==",
                             Rol = "Administrador"
                         },
                         new
@@ -164,11 +257,159 @@ namespace Korean_Convenience_Store.Migrations
                             Id = 2,
                             Activo = true,
                             Email = "cajero@bekeenco.com",
-                            FechaCreacion = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             NombreUsuario = "Cajero BekeenCo",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJArxw5RUh1ystd/aQfkZ840AwGNGfAJBcAOSeT3bv1CZhoyFsqyvC+2sgajyjPqEg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHqqoQrUxV3xn6fhX+xjq9tBfjEOCYQUmC+WYFHWEH25UTq77OOMHhAbHzlqMTmJUQ==",
                             Rol = "Cajero"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Activo = true,
+                            Email = "cliente@bekeenco.com",
+                            NombreUsuario = "Cliente Kiosco",
+                            PasswordHash = "AQAAAAIAAYagAAAAEM/IZdSOmRZsmv4VyEZW1IUUhTbn5gTzr49zwlAzPRGXO/LdPFNejHVLfbCMf1nIXw==",
+                            Rol = "Cliente"
                         });
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Venta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_venta");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FechaVenta")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("Fecha_venta");
+
+                    b.Property<int>("IdUser")
+                        .HasColumnType("integer")
+                        .HasColumnName("Id_user");
+
+                    b.Property<string>("MetodoPago")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("Metodo_pago");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("Total");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdUser");
+
+                    b.ToTable("Ventas", (string)null);
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Carrito", b =>
+                {
+                    b.HasOne("Korean_Convenience_Store.Models.Producto", "Producto")
+                        .WithMany("Carritos")
+                        .HasForeignKey("IdProducto")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Korean_Convenience_Store.Models.Usuario", "Usuario")
+                        .WithMany("Carritos")
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Producto");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.DetalleVenta", b =>
+                {
+                    b.HasOne("Korean_Convenience_Store.Models.Producto", "Producto")
+                        .WithMany("DetallesVenta")
+                        .HasForeignKey("IdProducto")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Korean_Convenience_Store.Models.Venta", "Venta")
+                        .WithMany("DetallesVenta")
+                        .HasForeignKey("IdVenta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Producto");
+
+                    b.Navigation("Venta");
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Producto", b =>
+                {
+                    b.HasOne("Korean_Convenience_Store.Models.Proveedor", "Proveedor")
+                        .WithMany("Productos")
+                        .HasForeignKey("IdProveedor")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Proveedor");
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Resena", b =>
+                {
+                    b.HasOne("Korean_Convenience_Store.Models.Producto", "Producto")
+                        .WithMany("Resenas")
+                        .HasForeignKey("IdProducto")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Korean_Convenience_Store.Models.Usuario", "Usuario")
+                        .WithMany("Resenas")
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Producto");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Venta", b =>
+                {
+                    b.HasOne("Korean_Convenience_Store.Models.Usuario", "Usuario")
+                        .WithMany("Ventas")
+                        .HasForeignKey("IdUser")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Producto", b =>
+                {
+                    b.Navigation("Carritos");
+
+                    b.Navigation("DetallesVenta");
+
+                    b.Navigation("Resenas");
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Proveedor", b =>
+                {
+                    b.Navigation("Productos");
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Usuario", b =>
+                {
+                    b.Navigation("Carritos");
+
+                    b.Navigation("Resenas");
+
+                    b.Navigation("Ventas");
+                });
+
+            modelBuilder.Entity("Korean_Convenience_Store.Models.Venta", b =>
+                {
+                    b.Navigation("DetallesVenta");
                 });
 #pragma warning restore 612, 618
         }
