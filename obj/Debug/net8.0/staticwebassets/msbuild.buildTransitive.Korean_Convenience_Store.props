@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\Korean_Convenience_Store.props" />
-</Project>
