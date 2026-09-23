@@ -1,0 +1,23 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.vscode/
+*.dll
+*.pdb
+
+# Configuración con credenciales
+appsettings.Development.json
+appsettings.*.local.json
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Documentos internos de fases
+docs/fases/
+
+# Carpeta de migraciones temporales (opcional, no borrar la real)
+*.tmp

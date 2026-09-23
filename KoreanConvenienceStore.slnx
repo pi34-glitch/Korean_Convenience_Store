@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="KoreanStoreApi/KoreanStoreApi.csproj" />
+  <Project Path="KoreanStoreMvc/KoreanStoreMvc.csproj" />
+</Solution>

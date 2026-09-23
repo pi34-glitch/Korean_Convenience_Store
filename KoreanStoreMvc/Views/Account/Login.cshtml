@@ -1,0 +1,140 @@
+@model KoreanStoreMvc.Models.LoginModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Iniciar Sesión - BekeenCo";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --rojo-bekeen: #E60000;
+            --rojo-hover: #DC2626;
+            --blanco: #FFFFFF;
+            --gris-fondo: #F8FAFC;
+            --negro-texto: #111827;
+            --gris-texto: #4B5563;
+            --gris-borde: #D1D5DB;
+            --rojo-error-bg: #FEE2E2;
+            --rojo-error-texto: #B91C1C;
+        }
+        body {
+            font-family: 'Korean Modern', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--gris-fondo);
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px; color: var(--negro-texto);
+        }
+        .login-card {
+            background-color: var(--blanco);
+            border: 2px solid var(--rojo-bekeen);
+            border-radius: 16px;
+            padding: 40px 36px;
+            width: 100%; max-width: 400px;
+            box-shadow: 0 8px 24px rgba(230, 0, 0, 0.15);
+        }
+        .logo-container { display: flex; justify-content: center; margin-bottom: 20px; }
+        .logo-circle {
+            width: 90px; height: 90px;
+            background-color: var(--rojo-bekeen);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3);
+        }
+        .brand-title {
+            text-align: center; color: var(--rojo-bekeen);
+            font-size: 28px; font-weight: 700; letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .brand-subtitle {
+            text-align: center; color: var(--gris-texto);
+            font-size: 13px; margin-bottom: 28px;
+        }
+        .form-group { margin-bottom: 18px; }
+        label {
+            display: block; color: var(--gris-texto);
+            font-size: 14px; font-weight: 500; margin-bottom: 6px;
+        }
+        input[type="email"], input[type="password"] {
+            width: 100%; padding: 11px 14px;
+            border: 1px solid var(--gris-borde);
+            border-radius: 8px; font-size: 14px;
+            color: var(--negro-texto); font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus {
+            outline: none; border-color: var(--rojo-bekeen);
+            box-shadow: 0 0 0 3px rgba(230, 0, 0, 0.1);
+        }
+        .btn-primary {
+            width: 100%; padding: 13px;
+            background-color: var(--rojo-bekeen); color: var(--blanco);
+            border: none; border-radius: 8px;
+            font-size: 15px; font-weight: 600;
+            font-family: inherit; cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 8px;
+        }
+        .btn-primary:hover { background-color: var(--rojo-hover); }
+        .error-box {
+            background-color: var(--rojo-error-bg); color: var(--rojo-error-texto);
+            padding: 11px 14px; border-radius: 8px;
+            font-size: 13px; text-align: center;
+            margin-bottom: 18px; border-left: 4px solid var(--rojo-error-texto);
+        }
+        .validation-error {
+            color: var(--rojo-error-texto); font-size: 12px;
+            margin-top: 4px; display: block;
+        }
+        .footer-note {
+            text-align: center; color: var(--gris-texto);
+            font-size: 12px; margin-top: 22px;
+        }
+        .footer-note strong { color: var(--rojo-bekeen); }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="logo-container">
+            <div class="logo-circle">🍜</div>
+        </div>
+
+        <h1 class="brand-title">BekeenCo</h1>
+        <p class="brand-subtitle">Sistema de Gestión Automatizada</p>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-box">@ViewBag.Error</div>
+        }
+
+        <form method="post" asp-controller="Account" asp-action="Login">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label for="Email">Correo electrónico</label>
+                <input type="email" id="Email" name="Email" asp-for="Email"
+                       placeholder="admin@bekeenco.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="Password">Contraseña</label>
+                <input type="password" id="Password" name="Password" asp-for="Password"
+                       placeholder="••••••••" autocomplete="current-password" />
+                <span asp-validation-for="Password" class="validation-error"></span>
+            </div>
+
+            <button type="submit" class="btn-primary">Iniciar sesión</button>
+        </form>
+
+        <p class="footer-note">
+            Korean Convenience Store · <strong>BekeenCo</strong>
+        </p>
+    </div>
+</body>
+</html>
