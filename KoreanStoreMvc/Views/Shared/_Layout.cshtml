@@ -1,74 +1,139 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var userId = HttpContextAccessor.HttpContext?.Session.GetInt32("UserId");
+    var userName = HttpContextAccessor.HttpContext?.Session.GetString("UserName");
+    var userRole = HttpContextAccessor.HttpContext?.Session.GetString("UserRole");
+    var estaLogueado = userId != null;
+}
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - KoreanStoreMvc</title>
+    <title>@ViewData["Title"] - BekeenCo</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/KoreanStoreMvc.styles.css" asp-append-version="true" />
+    <style>
+        :root {
+            --rojo-bekeenco: #E60000;
+            --rojo-hover: #DC2626;
+            --gris-texto: #4B5563;
+            --negro-texto: #111827;
+        }
+        body { background-color: #F8FAFC; font-family: 'Segoe UI', sans-serif; }
+
+        .navbar-bekeen {
+            background-color: #FFFFFF;
+            border-bottom: 3px solid var(--rojo-bekeenco);
+            padding: 12px 24px;
+        }
+        .navbar-brand-bekeen {
+            color: var(--rojo-bekeenco) !important;
+            font-weight: 700;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+        .nav-link-bekeen {
+            color: var(--gris-texto);
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .nav-link-bekeen:hover {
+            background-color: #FEF2F2;
+            color: var(--rojo-bekeenco);
+        }
+        .user-info {
+            color: var(--gris-texto);
+            font-size: 0.9rem;
+            margin-right: 12px;
+        }
+        .user-info .rol {
+            color: var(--rojo-bekeenco);
+            font-weight: 600;
+        }
+        .btn-logout {
+            background-color: var(--rojo-bekeenco);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-logout:hover { background-color: var(--rojo-hover); }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">KoreanStoreMvc</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+        <nav class="navbar-bekeen d-flex justify-content-between align-items-center flex-wrap">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                <a class="navbar-brand-bekeen" asp-controller="Home" asp-action="Index">
+                    🍜 BekeenCo
+                </a>
 
-                    @using Microsoft.AspNetCore.Http
-                    @inject IHttpContextAccessor HttpContextAccessor
-                    @{
-                        var userName = HttpContextAccessor.HttpContext?.Session.GetString("UserName");
-                        var userRole = HttpContextAccessor.HttpContext?.Session.GetString("UserRole");
-                    }
+                @if (estaLogueado)
+                {
+                    <div class="d-flex gap-2 flex-wrap">
+                        @* ==== MENÚ CLIENTE ==== *@
+                        @if (userRole == "Cliente")
+                        {
+                            <a class="nav-link-bekeen" asp-controller="Home" asp-action="Index">🏠 Inicio</a>
+                            <a class="nav-link-bekeen" href="/Catalogo/Index">🛒 Catálogo</a>
+                            <a class="nav-link-bekeen" href="/Carrito/Index">🧺 Mi Carrito</a>
+                            <a class="nav-link-bekeen" href="/Reseñas/Index">⭐ Mis Reseñas</a>
+                        }
 
-                    @if (!string.IsNullOrEmpty(userName))
-                    {
-                        <form method="post" asp-controller="Account" asp-action="Logout" style="display:inline;">
-                            @Html.AntiForgeryToken()
-                            <span style="color:#4B5563; margin-right:12px;">
-                                👤 @userName
-                                <small style="color:#E60000;">(@userRole)</small>
-                            </span>
-                            <button type="submit" style="
-                                background:#E60000; color:white;
-                                border:none; padding:8px 16px;
-                                border-radius:6px; cursor:pointer;
-                                font-weight:600;">
-                                Cerrar sesión
-                            </button>
-                        </form>
-                    }
-                </div>
+                        @* ==== MENÚ CAJERO VENDEDOR ==== *@
+                        @if (userRole == "CajeroVendedor")
+                        {
+                            <a class="nav-link-bekeen" asp-controller="Home" asp-action="Index">🏠 Inicio</a>
+                            <a class="nav-link-bekeen" href="/Caja/Index">💰 Caja</a>
+                            <a class="nav-link-bekeen" href="/Ventas/Index">📊 Ventas del Día</a>
+                        }
+
+                        @* ==== MENÚ ADMINISTRADOR ==== *@
+                        @if (userRole == "Administrador")
+                        {
+                            <a class="nav-link-bekeen" asp-controller="Home" asp-action="Index">🏠 Inicio</a>
+                            <a class="nav-link-bekeen" href="/Caja/Index">💰 Caja</a>
+                            <a class="nav-link-bekeen" href="/Ventas/Index">📊 Ventas</a>
+                            <a class="nav-link-bekeen" href="/Productos/Index">📦 Productos</a>
+                            <a class="nav-link-bekeen" href="/Proveedores/Index">🚚 Proveedores</a>
+                            <a class="nav-link-bekeen" href="/Usuarios/Index">👥 Usuarios</a>
+                        }
+                    </div>
+                }
             </div>
+
+            @if (estaLogueado)
+            {
+                <div class="d-flex align-items-center">
+                    <span class="user-info">
+                        👤 @userName
+                        <span class="rol">(@userRole)</span>
+                    </span>
+                    <form method="post" asp-controller="Account" asp-action="Logout" style="margin:0;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-logout">Cerrar sesión</button>
+                    </form>
+                </div>
+            }
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - KoreanStoreMvc - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    <main role="main" class="p-3">
+        @RenderBody()
+    </main>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
