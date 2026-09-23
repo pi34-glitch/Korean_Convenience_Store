@@ -1,0 +1,80 @@
+@model KoreanStoreMvc.Models.ProductoModel
+
+@{
+    ViewData["Title"] = "Eliminar Producto";
+}
+
+<style>
+    body { background: #F9FAFB; font-family: 'Segoe UI', sans-serif; }
+    .eliminar {
+        max-width: 600px;
+        margin: 2rem auto;
+        background: #FFFFFF;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .eliminar h1 { color: #E60000; margin-bottom: 1rem; }
+
+    .advertencia {
+        background: #FEE2E2;
+        color: #991B1B;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #991B1B;
+        font-weight: 500;
+    }
+
+    .fila {
+        padding: 0.7rem 0;
+        border-bottom: 1px solid #E5E7EB;
+        display: flex;
+        justify-content: space-between;
+    }
+    .fila:last-of-type { border-bottom: none; }
+    .fila strong { color: #4B5563; }
+
+    .acciones {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+    .btn-danger { background: #E60000; color: white; }
+    .btn-danger:hover { background: #DC2626; }
+    .btn-secondary { background: #E5E7EB; color: #111827; }
+    .btn-secondary:hover { background: #D1D5DB; }
+</style>
+
+<div class="eliminar">
+    <h1>🗑️ Eliminar Producto</h1>
+
+    <div class="advertencia">
+        <strong>⚠️ Advertencia:</strong> Esta acción eliminará permanentemente el producto del catálogo. Esta operación no se puede deshacer.
+    </div>
+
+    <div class="fila"><strong>ID:</strong> <span>@Model.Id_producto</span></div>
+    <div class="fila"><strong>Nombre:</strong> <span>@Model.Nombre</span></div>
+    <div class="fila"><strong>Tipo:</strong> <span>@Model.Tipo_venta</span></div>
+    <div class="fila"><strong>Precio:</strong> <span>Bs. @Model.Precio_unitario.ToString("F2")</span></div>
+    <div class="fila"><strong>Stock actual:</strong> <span>@Model.Stock_actual</span></div>
+    <div class="fila"><strong>Proveedor:</strong> <span>@(Model.NombreProveedor ?? "Sin proveedor")</span></div>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id_producto" method="post">
+        @Html.AntiForgeryToken()
+        <div class="acciones">
+            <button type="submit" class="btn btn-danger">🗑️ Sí, eliminar producto</button>
+            <a asp-action="Index" class="btn btn-secondary">← Cancelar</a>
+        </div>
+    </form>
+</div>
