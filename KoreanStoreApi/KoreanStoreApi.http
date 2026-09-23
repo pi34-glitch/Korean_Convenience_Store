@@ -1,0 +1,6 @@
+@KoreanStoreApi_HostAddress = http://localhost:5192
+
+GET {{KoreanStoreApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
