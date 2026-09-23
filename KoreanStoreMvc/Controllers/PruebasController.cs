@@ -1,3 +1,4 @@
+using KoreanStoreMvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KoreanStoreMvc.Controllers
@@ -7,6 +8,7 @@ namespace KoreanStoreMvc.Controllers
     /// </summary>
     public class PruebasController : Controller
     {
+        [CajeroRequired]
         public IActionResult Index()
         {
             var carrito = new List<CalculoProducto>

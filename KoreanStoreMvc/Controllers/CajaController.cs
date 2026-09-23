@@ -9,7 +9,7 @@ namespace KoreanStoreMvc.Controllers
     /// HU-04 - Selección de productos por unidad (Jorge Mercado Calcina).
     /// Este controlador MVC consume la API para obtener productos y validar stock.
     /// </summary>
-    [SessionRequired]
+    [CajeroRequired]
     public class CajaController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
