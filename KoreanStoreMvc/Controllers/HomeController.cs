@@ -4,6 +4,7 @@ using KoreanStoreMvc.Models;
 using KoreanStoreMvc.Filters;
 
 namespace KoreanStoreMvc.Controllers;
+
 [SessionRequired]
 public class HomeController : Controller
 {
@@ -20,6 +21,11 @@ public class HomeController : Controller
     }
 
     public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    public IActionResult MockupPreciosAlertas()
     {
         return View();
     }

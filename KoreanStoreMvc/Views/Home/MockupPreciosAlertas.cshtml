@@ -1,0 +1,60 @@
+@{
+    ViewData["Title"] = "Wireframe - Gestión de Tarifas y Alertas";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-3 text-primary"><i class="bi bi-tag-fill"></i> Panel de Tarifas, Descuentos y Alertas (Wireframe HU-07)</h2>
+    <p class="text-muted">Diseño preliminar para la actualización de tarifas en tiempo real y alertas de stock mínimo.</p>
+
+    <div class="row">
+        <!-- Tarjeta de Configuración de Precios -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-primary shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Actualización de Precio y Descuento</h5>
+                </div>
+                <div class="card-body">
+                    <form onsubmit="return false;">
+                        <div class="mb-3">
+                            <label class="form-label">Producto</label>
+                            <select class="form-select">
+                                <option>Ramen Shin Ramyun (Unidad)</option>
+                                <option>Toppings Mixtos (Gramos)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Precio Base (BS)</label>
+                            <input type="number" class="form-value form-control" value="15.00" step="0.50">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descuento Promocional (%)</label>
+                            <input type="number" class="form-control" value="10" min="0" max="100">
+                        </div>
+                        <button type="button" class="btn btn-primary w-100">Guardar Tarifa</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta de Alertas de Stock -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-warning shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">Alertas de Stock Crítico</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <div>
+                            <strong>¡Alerta!</strong> Ramen Shin Ramyun está por debajo del stock mínimo (Quedan: 3 unidades).
+                        </div>
+                    </div>
+                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                        <div>
+                            <strong>Atención:</strong> Bebida Milkis Lichi cerca del límite de seguridad.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

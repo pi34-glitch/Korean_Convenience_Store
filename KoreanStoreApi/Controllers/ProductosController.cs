@@ -112,5 +112,43 @@ namespace KoreanStoreApi.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
+        // PATCH: api/productos/5/tarifa
+        // Permite actualizar únicamente el precio/tarifa de un producto específico
+        [HttpPatch("{id}/tarifa")]
+        public async Task<IActionResult> UpdateTarifa(int id, [FromBody] decimal nuevoPrecio)
+        {
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto == null) return NotFound(new { mensaje = "Producto no encontrado." });
+
+            producto.Precio_unitario = nuevoPrecio;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "Tarifa/Precio actualizada exitosamente.", id_producto = producto.Id_producto, precio_nuevo = producto.Precio_unitario });
+        }
+
+        // GET: api/productos/alertas-stock
+        // Consulta los productos cuyo stock actual está por debajo o igual al stock mínimo
+        [HttpGet("alertas-stock")]
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> GetAlertasStock()
+        {
+            var alertas = await _context.Productos
+                .Include(p => p.Proveedor)
+                .Where(p => p.Stock_actual <= p.Stock_minimo)
+                .Select(p => new ProductoDto
+                {
+                    Id_producto = p.Id_producto,
+                    Id_proveedor = p.Id_proveedor,
+                    Nombre = p.Nombre,
+                    Tipo_venta = p.Tipo_venta.ToString(),
+                    Precio_unitario = p.Precio_unitario,
+                    Stock_actual = p.Stock_actual,
+                    Stock_minimo = p.Stock_minimo,
+                    NombreProveedor = p.Proveedor != null ? p.Proveedor.Nombre : null
+                })
+                .ToListAsync();
+
+            return Ok(alertas);
+        }
     }
 }
