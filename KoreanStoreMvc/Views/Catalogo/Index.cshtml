@@ -1,0 +1,742 @@
+@model List<KoreanStoreMvc.Models.ProductoModel>
+
+@{
+    ViewData["Title"] = "Catálogo Digital";
+}
+
+<div class="catalogo-container">
+
+    <!-- ENCABEZADO -->
+    <div class="catalogo-header">
+        <h1>Catálogo Digital</h1>
+        <p>Explora nuestros productos y simula tu consumo.</p>
+    </div>
+
+    <!-- CATEGORÍAS -->
+    <div class="categorias">
+
+        <button class="categoria-btn activo" onclick="filtrarCategoria('todos', this)">
+            Todos
+        </button>
+
+        <button class="categoria-btn" onclick="filtrarCategoria('caldos', this)">
+            Caldos
+        </button>
+
+        <button class="categoria-btn" onclick="filtrarCategoria('fideos', this)">
+            Fideos
+        </button>
+
+        <button class="categoria-btn" onclick="filtrarCategoria('bebidas', this)">
+            Bebidas
+        </button>
+
+        <button class="categoria-btn" onclick="filtrarCategoria('snacks', this)">
+            Snacks
+        </button>
+
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="catalogo-contenido">
+
+        <!-- PRODUCTOS -->
+        <div class="productos">
+
+            @foreach (var producto in Model)
+            {
+                var nombre = producto.Nombre.ToLower();
+
+                string categoria = "otros";
+
+                if (nombre.Contains("ramen") ||
+                    nombre.Contains("fideo") ||
+                    nombre.Contains("noodle") ||
+                    nombre.Contains("udon"))
+                {
+                    categoria = "fideos";
+                }
+                else if (nombre.Contains("caldo") ||
+                         nombre.Contains("sopa") ||
+                         nombre.Contains("sop"))
+                {
+                    categoria = "caldos";
+                }
+                else if (nombre.Contains("coca") ||
+                         nombre.Contains("bebida") ||
+                         nombre.Contains("agua") ||
+                         nombre.Contains("soju") ||
+                         nombre.Contains("té") ||
+                         nombre.Contains("tea"))
+                {
+                    categoria = "bebidas";
+                }
+                else if (nombre.Contains("snack") ||
+                         nombre.Contains("galleta") ||
+                         nombre.Contains("papas") ||
+                         nombre.Contains("chips"))
+                {
+                    categoria = "snacks";
+                }
+
+                <div class="producto-card"
+                     data-categoria="@categoria">
+
+                    <div class="producto-imagen">
+                        <span>🍜</span>
+                    </div>
+
+                    <div class="producto-info">
+
+                        <h3>@producto.Nombre</h3>
+
+                        <p class="producto-proveedor">
+                            @(producto.NombreProveedor ?? "Producto")
+                        </p>
+
+                        <p class="producto-tipo">
+                            Venta: @producto.Tipo_venta
+                        </p>
+
+                        <p class="producto-precio">
+                            Bs. @producto.Precio_unitario.ToString("0.00")
+                        </p>
+
+                        @if (producto.Stock_actual > 0)
+                        {
+                            <p class="stock disponible">
+                                Disponible
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="stock agotado">
+                                Agotado
+                            </p>
+                        }
+
+                        @if (producto.Stock_actual > 0)
+                        {
+                            <div class="simulacion">
+
+                                <label>
+                                    Cantidad
+                                </label>
+
+                                <div class="cantidad-control">
+
+                                    <button type="button"
+                                            onclick="cambiarCantidad(@producto.Id_producto, -1)">
+                                        −
+                                    </button>
+
+                                    <input type="number"
+                                           id="cantidad-@producto.Id_producto"
+                                           value="1"
+                                           min="1"
+                                           onchange="calcularProducto(@producto.Id_producto, @producto.Precio_unitario.ToString(System.Globalization.CultureInfo.InvariantCulture))">
+
+                                    <button type="button"
+                                            onclick="cambiarCantidad(@producto.Id_producto, 1)">
+                                        +
+                                    </button>
+
+                                </div>
+
+                                <p class="subtotal">
+                                    Subtotal:
+                                    <strong id="subtotal-@producto.Id_producto">
+                                        Bs. @producto.Precio_unitario.ToString("0.00")
+                                    </strong>
+                                </p>
+
+                                <button type="button"
+                                        class="btn-agregar"
+                                        onclick="agregarAlConsumo(
+                                            @producto.Id_producto,
+                                            '@producto.Nombre.Replace("'", "\\'")',
+                                            @producto.Precio_unitario.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                                        )">
+                                    Agregar al consumo
+                                </button>
+
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- RESUMEN de mi consumo???-->
+        
+<div class="resumen">
+
+            <div class="resumen-header">
+                <h2>Mi consumo</h2>
+            </div>
+
+            <div id="lista-consumo">
+                <p class="sin-productos">
+                    Todavía no has agregado productos.
+                </p>
+            </div>
+
+            <div class="total">
+
+                <span>Total estimado</span>
+
+                <strong id="total-consumo">
+                    Bs. 0.00
+                </strong>
+
+            </div>
+
+            <button type="button"
+                    class="btn-limpiar"
+                    onclick="limpiarConsumo()">
+                Limpiar consumo
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #ffffff;
+    }
+
+    .catalogo-container {
+        width: 95%;
+        max-width: 1400px;
+        margin: 35px auto;
+    }
+
+    .catalogo-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .catalogo-header h1 {
+        color: #c62828;
+        font-size: 38px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .catalogo-header p {
+        color: #666;
+        font-size: 17px;
+    }
+
+
+    /* CATEGORÍAS */
+
+    .categorias {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+    }
+
+    .categoria-btn {
+        border: 2px solid #c62828;
+        background-color: white;
+        color: #c62828;
+        padding: 10px 22px;
+        border-radius: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .categoria-btn:hover,
+    .categoria-btn.activo {
+        background-color: #c62828;
+        color: white;
+    }
+
+
+    /* CONTENIDO */
+
+    .catalogo-contenido {
+        display: grid;
+        grid-template-columns: 1fr 330px;
+        gap: 30px;
+        align-items: start;
+    }
+
+
+    /* PRODUCTOS */
+
+    .productos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .producto-card {
+        background-color: white;
+        border: 1px solid #dddddd;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .producto-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 7px 20px rgba(0, 0, 0, 0.12);
+    }
+
+
+    .producto-imagen {
+        height: 140px;
+        background-color: #fff5f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 65px;
+    }
+
+    .producto-info {
+        padding: 20px;
+    }
+
+    .producto-info h3 {
+        margin: 0 0 8px 0;
+        color: #333;
+        font-size: 20px;
+    }
+
+    .producto-proveedor {
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .producto-tipo {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .producto-precio {
+        color: #c62828;
+        font-size: 25px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+
+    /* STOCK */
+
+    .stock {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .disponible {
+        color: #2e7d32;
+    }
+
+    .agotado {
+        color: #c62828;
+    }
+
+
+    /* CANTIDAD */
+
+    .simulacion {
+        border-top: 1px solid #eeeeee;
+        margin-top: 15px;
+        padding-top: 15px;
+    }
+
+    .simulacion label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #444;
+    }
+
+    .cantidad-control {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .cantidad-control button {
+        width: 35px;
+        height: 35px;
+        border: none;
+        background-color: #c62828;
+        color: white;
+        font-size: 20px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .cantidad-control input {
+        width: 60px;
+        height: 35px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+
+
+    .subtotal {
+        margin-top: 12px;
+        color: #555;
+    }
+
+    .subtotal strong {
+        color: #c62828;
+    }
+
+
+    .btn-agregar {
+        width: 100%;
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #c62828;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .btn-agregar:hover {
+        background-color: #a61f1f;
+    }
+
+
+    /* RESUMEN */
+
+    .resumen {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        overflow: hidden;
+        position: sticky;
+        top: 20px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .resumen-header {
+        background-color: #c62828;
+        padding: 18px;
+    }
+
+    .resumen-header h2 {
+        color: white;
+        margin: 0;
+    }
+
+    #lista-consumo {
+        padding: 15px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .sin-productos {
+        text-align: center;
+        color: #888;
+    }
+
+    .consumo-item {
+        border-bottom: 1px solid #eee;
+        padding: 10px 0;
+    }
+
+    .consumo-item strong {
+        color: #333;
+    }
+
+    .consumo-item small {
+        color: #777;
+    }
+
+    .total {
+        border-top: 2px solid #c62828;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .total span {
+        font-weight: bold;
+    }
+
+    .total strong {
+        color: #c62828;
+        font-size: 22px;
+    }
+
+    .btn-limpiar {
+        width: calc(100% - 30px);
+        margin: 0 15px 15px;
+        padding: 10px;
+        border: 1px solid #c62828;
+        background-color: white;
+        color: #c62828;
+        border-radius: 7px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn-limpiar:hover {
+        background-color: #c62828;
+        color: white;
+    }
+
+
+    /* RESPONSIVE */
+
+    @@media (max-width: 900px) {
+
+        .catalogo-contenido {
+            grid-template-columns: 1fr;
+        }
+
+        .resumen {
+            position: static;
+        }
+    }
+
+    @@media (max-width: 600px) {
+
+        .catalogo-header h1 {
+            font-size: 30px;
+        }
+
+        .productos {
+            grid-template-columns: 1fr;
+        }
+
+        .categoria-btn {
+            padding: 8px 15px;
+        }
+    }
+
+</style>
+
+
+<script>
+
+    // Productos agregados al consumo
+    let consumo = [];
+
+
+    // ==========================================
+    // CAMBIAR CANTIDAD
+    // ==========================================
+
+    function cambiarCantidad(id, cambio) {
+
+        const input = document.getElementById("cantidad-" + id);
+
+        let cantidad = parseInt(input.value) || 1;
+
+        cantidad += cambio;
+
+        if (cantidad < 1) {
+            cantidad = 1;
+        }
+
+        input.value = cantidad;
+
+        const precio = parseFloat(
+            input
+                .closest(".simulacion")
+                .querySelector(".subtotal strong")
+                .dataset.precio || 0
+        );
+
+        calcularProductoDesdeVista(id);
+    }
+
+
+    // ==========================================
+    // CALCULAR SUBTOTAL
+    // ==========================================
+
+    function calcularProducto(id, precio) {
+
+        const input = document.getElementById("cantidad-" + id);
+
+        let cantidad = parseInt(input.value) || 1;
+
+        if (cantidad < 1) {
+            cantidad = 1;
+            input.value = 1;
+        }
+
+        const subtotal = cantidad * precio;
+
+        document.getElementById("subtotal-" + id).innerText =
+            "Bs. " + subtotal.toFixed(2);
+    }
+
+
+    function calcularProductoDesdeVista(id) {
+
+        const input = document.getElementById("cantidad-" + id);
+
+        const card = input.closest(".producto-card");
+
+        const precioTexto = card
+            .querySelector(".producto-precio")
+            .innerText
+            .replace("Bs.", "")
+            .trim();
+
+        const precio = parseFloat(precioTexto);
+
+        calcularProducto(id, precio);
+    }
+
+
+    // ==========================================
+    // AGREGAR AL CONSUMO
+    // ==========================================
+
+    function agregarAlConsumo(id, nombre, precio) {
+
+        const input = document.getElementById("cantidad-" + id);
+
+        const cantidad = parseInt(input.value) || 1;
+
+        const subtotal = cantidad * precio;
+
+        const existente = consumo.find(p => p.id === id);
+
+        if (existente) {
+
+            existente.cantidad += cantidad;
+            existente.subtotal = existente.cantidad * existente.precio;
+
+        } else {
+
+            consumo.push({
+                id: id,
+                nombre: nombre,
+                precio: precio,
+                cantidad: cantidad,
+                subtotal: subtotal
+            });
+        }
+
+        mostrarConsumo();
+    }
+
+
+    // ==========================================
+    // MOSTRAR CONSUMO
+    // ==========================================
+
+    function mostrarConsumo() {
+
+        const lista = document.getElementById("lista-consumo");
+
+        lista.innerHTML = "";
+
+        let total = 0;
+
+        if (consumo.length === 0) {
+
+            lista.innerHTML =
+                '<p class="sin-productos">Todavía no has agregado productos.</p>';
+
+        }
+
+        consumo.forEach(producto => {
+
+            total += producto.subtotal;
+
+            lista.innerHTML += `
+                <div class="consumo-item">
+
+                    <strong>${producto.nombre}</strong>
+
+                    <br>
+
+                    <small>
+                        ${producto.cantidad} × Bs. ${producto.precio.toFixed(2)}
+                    </small>
+
+                    <br>
+
+                    <strong>
+                        Bs. ${producto.subtotal.toFixed(2)}
+                    </strong>
+
+                </div>
+            `;
+        });
+
+        document.getElementById("total-consumo").innerText =
+            "Bs. " + total.toFixed(2);
+    }
+
+
+    // ==========================================
+    // LIMPIAR CONSUMO
+    // ==========================================
+
+    function limpiarConsumo() {
+
+        consumo = [];
+
+        mostrarConsumo();
+    }
+
+
+    // ==========================================
+    // FILTRAR CATEGORÍAS
+    // ==========================================
+
+    function filtrarCategoria(categoria, boton) {
+
+        const productos =
+            document.querySelectorAll(".producto-card");
+
+        productos.forEach(producto => {
+
+            if (
+                categoria === "todos" ||
+                producto.dataset.categoria === categoria
+            ) {
+                producto.style.display = "";
+            }
+            else {
+                producto.style.display = "none";
+            }
+
+        });
+
+
+        document
+            .querySelectorAll(".categoria-btn")
+            .forEach(btn => {
+                btn.classList.remove("activo");
+            });
+
+        boton.classList.add("activo");
+    }
+
+</script>

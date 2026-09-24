@@ -1,0 +1,244 @@
+@model KoreanStoreMvc.Models.CarritoModel
+
+@{
+    ViewData["Title"] = "Calculadora por Gramaje";
+}
+
+<div class="calculadora-container">
+
+    <div class="encabezado">
+
+        <h1>Calculadora por Gramaje</h1>
+
+        <p>
+            Calcula el precio de un producto según su peso.
+        </p>
+
+    </div>
+
+
+    <div class="calculadora-card">
+
+        <div class="card-header">
+            <h2>Datos del producto</h2>
+        </div>
+
+
+        <form asp-action="Index" method="post">
+
+            <div class="campo">
+
+                <label asp-for="Id_producto">
+                    Producto
+                </label>
+
+                <select asp-for="Id_producto"
+                        class="form-control">
+
+                    <option value="0">
+                        Selecciona un producto
+                    </option>
+
+                    @foreach (var producto in ViewBag.Productos)
+                    {
+                        <option value="@producto.Id_producto">
+
+                            @producto.Nombre - Bs. @producto.Precio_unitario / g
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label asp-for="CantidadGramo">
+                    Cantidad en gramos
+                </label>
+
+                <input asp-for="CantidadGramo"
+                       type="number"
+                       min="0.01"
+                       step="0.01"
+                       class="form-control"
+                       placeholder="Ejemplo: 500" />
+
+                <span asp-validation-for="CantidadGramo"
+                      class="mensaje-error">
+                </span>
+
+            </div>
+
+
+            <button type="submit"
+                    class="btn-calcular">
+
+                Calcular precio
+
+            </button>
+
+        </form>
+
+
+        @if (Model.Subtotal > 0)
+        {
+            <div class="resultado">
+
+                <p class="resultado-titulo">
+                    Precio total
+                </p>
+
+                <p class="resultado-producto">
+                    @Model.NombreProducto
+                </p>
+
+                <p class="resultado-precio">
+                    Bs. @Model.Subtotal.ToString("0.00")
+                </p>
+
+                <p class="resultado-detalle">
+                    @Model.CantidadGramo gramos
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+<style>
+
+    body {
+        background-color: #ffffff;
+    }
+
+    .calculadora-container {
+        width: 90%;
+        max-width: 850px;
+        margin: 50px auto;
+    }
+
+    .encabezado {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .encabezado h1 {
+        color: #c62828;
+        font-size: 38px;
+        font-weight: bold;
+    }
+
+    .encabezado p {
+        color: #555555;
+        font-size: 17px;
+    }
+
+    .calculadora-card {
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header {
+        background-color: #c62828;
+        padding: 20px 30px;
+    }
+
+    .card-header h2 {
+        color: white;
+        margin: 0;
+        font-size: 24px;
+    }
+
+    form {
+        padding: 30px;
+    }
+
+    .campo {
+        margin-bottom: 25px;
+    }
+
+    .campo label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333333;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cccccc;
+        border-radius: 8px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #c62828;
+    }
+
+    .btn-calcular {
+        width: 100%;
+        padding: 14px;
+        background-color: #c62828;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .btn-calcular:hover {
+        background-color: #a61f1f;
+    }
+
+    .resultado {
+        margin: 0 30px 30px 30px;
+        padding: 25px;
+        border: 2px solid #c62828;
+        border-radius: 10px;
+        text-align: center;
+        background-color: #fffafa;
+    }
+
+    .resultado-titulo {
+        color: #c62828;
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .resultado-producto {
+        color: #333333;
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .resultado-precio {
+        color: #c62828;
+        font-size: 38px;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+
+    .resultado-detalle {
+        color: #666666;
+        margin-top: 5px;
+    }
+
+    .mensaje-error {
+        color: #c62828;
+        font-size: 14px;
+    }
+
+</style>
