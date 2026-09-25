@@ -42,10 +42,9 @@ namespace KoreanStoreApi.Controllers
             return Ok(ventas);
         }
 
-        // POST: api/ventas
-        // Requerimiento Sprint 2: Transacción atómica y descuento automático de inventario
-        [HttpPost]
-        public async Task<ActionResult<VentaDto>> Create([FromBody] VentaDto dto)
+        // GET: api/ventas/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<VentaDto>> GetById(int id)
         {
             var venta = await _context.Ventas
                 .Include(v => v.Detalles)
@@ -54,54 +53,102 @@ namespace KoreanStoreApi.Controllers
 
             if (venta == null) return NotFound();
 
+            return Ok(new VentaDto
+            {
+                Id_venta = venta.Id_venta,
+                Id_user = venta.Id_user,
+                Fecha_venta = venta.Fecha_venta,
+                Total = venta.Total,
+                Metodo_pago = venta.Metodo_pago.ToString(),
+                Detalles = venta.Detalles.Select(d => new DetalleVentaDto
+                {
+                    Id_detalle = d.Id_detalle,
+                    Id_venta = d.Id_venta,
+                    Id_producto = d.Id_producto,
+                    Cantidad_o_gramos = d.Cantidad_o_gramos,
+                    Precio_aplicado = d.Precio_aplicado,
+                    Subtotal = d.Subtotal,
+                    NombreProducto = d.Producto?.Nombre
+                }).ToList()
+            });
+        }
+
+        // POST: api/ventas  → Cobro transaccional con descuento de stock
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] VentaDto dto)
+        {
+            // 1. Validaciones iniciales
+            if (dto == null || dto.Detalles == null || !dto.Detalles.Any())
+                return BadRequest(new { exito = false, mensaje = "El ticket no contiene productos." });
+
+            if (!Enum.TryParse<MetodoPago>(dto.Metodo_pago, out var metodo))
+                return BadRequest(new { exito = false, mensaje = "Método de pago inválido. Use: Efectivo, QR o Tarjeta." });
+
+            // 2. Abrir transacción atómica
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                // 3. Crear la cabecera de la venta
                 var venta = new Venta
                 {
                     Id_user = dto.Id_user,
                     Fecha_venta = DateTime.UtcNow,
                     Total = dto.Total,
-                    Metodo_pago = metodo,
-                    Detalles = new List<DetalleVenta>()
+                    Metodo_pago = metodo
                 };
-
-                foreach (var d in dto.Detalles)
-                {
-                    var producto = await _context.Productos.FindAsync(d.Id_producto);
-                    if (producto == null)
-                    {
-                        return BadRequest(new { mensaje = $"El producto con ID {d.Id_producto} no existe." });
-                    }
-
-                    if (producto.Stock_actual < d.Cantidad_o_gramos)
-                    {
-                        return BadRequest(new { mensaje = $"Stock insuficiente para el producto '{producto.Nombre}'. Disponible: {producto.Stock_actual}" });
-                    }
-
-                    // Descuento atómico de inventario
-                    producto.Stock_actual -= d.Cantidad_o_gramos;
-
-                    venta.Detalles.Add(new DetalleVenta
-                    {
-                        Id_producto = d.Id_producto,
-                        Cantidad_o_gramos = d.Cantidad_o_gramos,
-                        Precio_aplicado = d.Precio_aplicado,
-                        Subtotal = d.Subtotal
-                    });
-                }
-
                 _context.Ventas.Add(venta);
                 await _context.SaveChangesAsync();
+
+                // 4. Procesar cada detalle: validar stock y descontar
+                foreach (var item in dto.Detalles)
+                {
+                    var producto = await _context.Productos
+                        .FirstOrDefaultAsync(p => p.Id_producto == item.Id_producto);
+
+                    if (producto == null)
+                        throw new Exception($"El producto con ID {item.Id_producto} no existe.");
+
+                    if (producto.Stock_actual < item.Cantidad_o_gramos)
+                        throw new Exception($"Stock insuficiente para \"{producto.Nombre}\". Disponible: {producto.Stock_actual}, solicitado: {item.Cantidad_o_gramos}.");
+
+                    // Descuento atómico de existencias
+                    producto.Stock_actual -= item.Cantidad_o_gramos;
+
+                    // Crear el detalle
+                    var detalle = new DetalleVenta
+                    {
+                        Id_venta = venta.Id_venta,
+                        Id_producto = item.Id_producto,
+                        Cantidad_o_gramos = item.Cantidad_o_gramos,
+                        Precio_aplicado = producto.Precio_unitario,
+                        Subtotal = item.Cantidad_o_gramos * producto.Precio_unitario
+                    };
+                    _context.DetallesVenta.Add(detalle);
+                }
+
+                // 5. Guardar todos los cambios
+                await _context.SaveChangesAsync();
+
+                // 6. Confirmar transacción
                 await transaction.CommitAsync();
 
-                dto.Id_venta = venta.Id_venta;
-                return Ok(dto);
+                // 7. Devolver respuesta ENVUELTA con exito + idVenta + mensaje
+                return Ok(new
+                {
+                    exito = true,
+                    idVenta = venta.Id_venta,
+                    mensaje = "Venta procesada con éxito."
+                });
             }
             catch (Exception ex)
             {
+                // 8. Revertir todo si algo falla
                 await transaction.RollbackAsync();
-                return StatusCode(500, new { mensaje = "Error interno al procesar la venta", detalle = ex.Message });
+                return StatusCode(500, new
+                {
+                    exito = false,
+                    mensaje = "Error al procesar el cobro: " + ex.Message
+                });
             }
         }
     }

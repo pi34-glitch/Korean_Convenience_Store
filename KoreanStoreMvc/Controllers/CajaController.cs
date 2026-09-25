@@ -66,7 +66,13 @@ namespace KoreanStoreMvc.Controllers
             {
                 var response = await client.PostAsJsonAsync("api/caja/validar-stock", request);
                 var contenido = await response.Content.ReadAsStringAsync();
-                return Content(contenido, "application/json");
+
+                return new ContentResult
+                {
+                    Content = contenido,
+                    ContentType = "application/json",
+                    StatusCode = (int)response.StatusCode
+                };
             }
             catch (Exception ex)
             {
@@ -104,7 +110,13 @@ namespace KoreanStoreMvc.Controllers
             {
                 var response = await client.PostAsJsonAsync("api/ventas", ventaDto);
                 var contenido = await response.Content.ReadAsStringAsync();
-                return Content(contenido, "application/json");
+
+                return new ContentResult
+                {
+                    Content = contenido,
+                    ContentType = "application/json",
+                    StatusCode = (int)response.StatusCode
+                };
             }
             catch (Exception ex)
             {
