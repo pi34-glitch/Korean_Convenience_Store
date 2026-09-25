@@ -69,5 +69,12 @@ namespace KoreanStoreMvc.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
+
+        // GET: /Account/AccesoDenegado
+        [HttpGet]
+        public IActionResult AccesoDenegado()
+        {
+            return View();
+        }
     }
 }
