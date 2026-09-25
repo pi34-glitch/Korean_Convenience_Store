@@ -3,6 +3,6 @@ namespace KoreanStoreApi.Models
     public enum TipoVenta
     {
         Unidad,
-        PesoGramos
+        Kilo
     }
 }
