@@ -47,8 +47,12 @@ namespace KoreanStoreApi.Controllers
         [HttpPost]
         public async Task<ActionResult<VentaDto>> Create([FromBody] VentaDto dto)
         {
-            if (!Enum.TryParse<MetodoPago>(dto.Metodo_pago, out var metodo))
-                return BadRequest(new { mensaje = "Método de pago inválido" });
+            var venta = await _context.Ventas
+                .Include(v => v.Detalles)
+                .ThenInclude(d => d.Producto)
+                .FirstOrDefaultAsync(v => v.Id_venta == id);
+
+            if (venta == null) return NotFound();
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try

@@ -105,6 +105,22 @@
         padding: 3rem;
         color: var(--gris-texto);
     }
+
+    .alert-error {
+        background: #FEE2E2; color: #B91C1C;
+        padding: 12px 16px; border-radius: 8px;
+        border-left: 4px solid #B91C1C;
+        margin: 16px;
+        font-size: 14px;
+    }
+
+    .alert-info {
+        background: #FEF3C7; color: #92400E;
+        padding: 12px 16px; border-radius: 8px;
+        border-left: 4px solid #F59E0B;
+        margin: 16px;
+        font-size: 14px;
+    }
 </style>
 
 <div class="contenido-principal">
@@ -113,10 +129,27 @@
         <span style="color: var(--gris-texto);">Selección por Unidad</span>
     </div>
 
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert-error">
+            <strong>⚠️ Error:</strong> @ViewBag.Error
+        </div>
+    }
+
+    @if (ViewBag.Mensaje != null)
+    {
+        <div class="alert-info">
+            <strong>ℹ️ Info:</strong> @ViewBag.Mensaje
+        </div>
+    }
+
     @if (!Model.Any())
     {
         <div class="sin-productos">
-            <p>No hay productos disponibles en este momento.</p>
+            <p style="font-size: 1.1rem;">No hay productos disponibles en este momento.</p>
+            <p style="font-size: 0.9rem; margin-top: 12px;">
+                Verifica que la API esté corriendo y que la tabla <strong>Productos</strong> tenga datos.
+            </p>
         </div>
     }
     else
@@ -146,6 +179,7 @@
 </div>
 
 <div class="panel-ticket">
+    @Html.AntiForgeryToken()
     <h2>🧾 Resumen del Ticket</h2>
     <div id="lista-items">
         <p style="color: var(--gris-texto); font-size: 0.9rem;">No hay productos seleccionados.</p>
@@ -154,12 +188,42 @@
         <span>TOTAL:</span>
         <span id="total-general">Bs. 0.00</span>
     </div>
-    <button class="btn-cancelar" onclick="cancelarTicket()">🗑️ Cancelar Ticket</button>
+
+    <div style="margin-top: 1rem;">
+        <label style="display:block; font-weight:600; margin-bottom:6px; color:#374151;">
+            Método de pago
+        </label>
+        <select id="metodo-pago" style="
+            width:100%; padding:10px;
+            border:2px solid #E60000; border-radius:8px;
+            font-size:1rem; font-weight:600;
+            color:#111827; background:#FFFFFF;">
+            <option value="Efectivo">💵 Efectivo</option>
+            <option value="QR">📱 QR</option>
+            <option value="Tarjeta">💳 Tarjeta</option>
+        </select>
+    </div>
+
+    <button class="btn-cobrar" onclick="cobrarTicket()"
+            style="background:#E60000; color:white; border:none;
+                   border-radius:8px; padding:0.9rem; width:100%;
+                   font-size:1.1rem; font-weight:700; cursor:pointer;
+                   margin-top:1rem;">
+        ✅ Cobrar
+    </button>
+
+    <button class="btn-cancelar" onclick="cancelarTicket()">
+        🗑️ Cancelar Ticket
+    </button>
 </div>
 
 @section Scripts {
     <script>
         let carrito = {};
+
+        function getToken() {
+            return document.querySelector('input[name="__RequestVerificationToken"]').value;
+        }
 
         function sumarProducto(id) {
             const tarjeta = document.querySelector(`.tarjeta-producto[data-id="${id}"]`);
@@ -231,11 +295,60 @@
             actualizarTicket();
         }
 
+        async function cobrarTicket() {
+            const items = Object.entries(carrito);
+            if (items.length === 0) {
+                alert('⚠️ El ticket está vacío.');
+                return;
+            }
+
+            const metodoPago = document.getElementById('metodo-pago').value;
+            if (!confirm(`¿Confirmar cobro por Bs. ${document.getElementById('total-general').textContent.replace('Bs. ', '')} con ${metodoPago}?`)) return;
+
+            const detalles = items.map(([id, item]) => ({
+                id_producto: parseInt(id),
+                cantidad: item.cantidad,
+                precio: item.precio
+            }));
+
+            const total = detalles.reduce((sum, d) => sum + (d.cantidad * d.precio), 0);
+
+            try {
+                const response = await fetch('/Caja/Cobrar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': getToken()
+                    },
+                    body: JSON.stringify({
+                        total: total,
+                        metodoPago: metodoPago,
+                        detalles: detalles
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.exito) {
+                    alert('✅ Venta procesada. Generando ticket...');
+                    window.location.href = `/Caja/Ticket/${data.idVenta}`;
+                } else {
+                    alert(`❌ Error: ${data.mensaje}`);
+                }
+            } catch (error) {
+                alert('❌ Error de conexión con el servidor.');
+                console.error(error);
+            }
+        }
+
         async function validarStockEnServidor(productoId, cantidad) {
             try {
                 const response = await fetch('/Caja/ValidarStock', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': getToken()
+                    },
                     body: JSON.stringify({ productoId: productoId, cantidad: cantidad })
                 });
                 const data = await response.json();

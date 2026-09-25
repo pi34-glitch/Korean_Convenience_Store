@@ -1,0 +1,102 @@
+@model KoreanStoreMvc.Models.ProductoModel
+
+@{
+    ViewData["Title"] = "Detalle del Producto";
+    var stockBajo = Model.Stock_actual <= Model.Stock_minimo;
+}
+
+<style>
+    body { background: #F9FAFB; font-family: 'Segoe UI', sans-serif; }
+    .detalle {
+        max-width: 700px;
+        margin: 2rem auto;
+        background: #FFFFFF;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .detalle h1 { color: #E60000; margin-bottom: 1.5rem; }
+    .fila {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+        border-bottom: 1px solid #E5E7EB;
+    }
+    .fila:last-child { border-bottom: none; }
+    .fila strong { color: #4B5563; font-weight: 600; }
+    .fila span { color: #111827; }
+    .alerta-stock {
+        background: #FEE2E2;
+        color: #991B1B;
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #991B1B;
+        font-weight: 600;
+    }
+    .acciones {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .btn {
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+    }
+    .btn-primary { background: #E60000; color: white; }
+    .btn-primary:hover { background: #DC2626; color: white; }
+    .btn-secondary { background: #E5E7EB; color: #111827; }
+    .btn-secondary:hover { background: #D1D5DB; color: #111827; }
+    .btn-danger { background: #991B1B; color: white; }
+    .btn-danger:hover { background: #7F1D1D; color: white; }
+</style>
+
+<div class="detalle">
+    <h1>📋 Detalle del Producto</h1>
+
+    @if (stockBajo)
+    {
+        <div class="alerta-stock">
+            ⚠️ <strong>Alerta:</strong> El stock actual (@Model.Stock_actual) está por debajo del mínimo (@Model.Stock_minimo).
+        </div>
+    }
+
+    <div class="fila">
+        <strong>ID:</strong>
+        <span>@Model.Id_producto</span>
+    </div>
+    <div class="fila">
+        <strong>Nombre:</strong>
+        <span>@Model.Nombre</span>
+    </div>
+    <div class="fila">
+        <strong>Tipo de venta:</strong>
+        <span>@Model.Tipo_venta</span>
+    </div>
+    <div class="fila">
+        <strong>Precio unitario:</strong>
+        <span>Bs. @Model.Precio_unitario.ToString("F2")</span>
+    </div>
+    <div class="fila">
+        <strong>Stock actual:</strong>
+        <span>@Model.Stock_actual</span>
+    </div>
+    <div class="fila">
+        <strong>Stock mínimo:</strong>
+        <span>@Model.Stock_minimo</span>
+    </div>
+    <div class="fila">
+        <strong>Proveedor:</strong>
+        <span>@(Model.NombreProveedor ?? "Sin proveedor asignado")</span>
+    </div>
+
+    <div class="acciones">
+        <a asp-action="Edit" asp-route-id="@Model.Id_producto" class="btn btn-primary">✏️ Editar</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id_producto" class="btn btn-danger">🗑️ Eliminar</a>
+        <a asp-action="Index" class="btn btn-secondary">← Volver al inventario</a>
+    </div>
+</div>
