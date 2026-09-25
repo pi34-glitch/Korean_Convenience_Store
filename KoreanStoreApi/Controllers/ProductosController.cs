@@ -35,6 +35,30 @@ namespace KoreanStoreApi.Controllers
             return Ok(lista);
         }
 
+        // GET: api/productos/alertas
+        // Requerimiento Sprint 2: Alertas visuales de stock mínimo
+        [HttpGet("alertas")]
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> GetAlertasStock()
+        {
+            var listaAlertas = await _context.Productos
+                .Include(p => p.Proveedor)
+                .Where(p => p.Stock_actual <= p.Stock_minimo)
+                .Select(p => new ProductoDto
+                {
+                    Id_producto = p.Id_producto,
+                    Id_proveedor = p.Id_proveedor,
+                    Nombre = p.Nombre,
+                    Tipo_venta = p.Tipo_venta.ToString(),
+                    Precio_unitario = p.Precio_unitario,
+                    Stock_actual = p.Stock_actual,
+                    Stock_minimo = p.Stock_minimo,
+                    NombreProveedor = p.Proveedor != null ? p.Proveedor.Nombre : null
+                })
+                .ToListAsync();
+
+            return Ok(listaAlertas);
+        }
+
         // GET: api/productos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductoDto>> GetById(int id)
@@ -96,6 +120,20 @@ namespace KoreanStoreApi.Controllers
             producto.Precio_unitario = dto.Precio_unitario;
             producto.Stock_actual = dto.Stock_actual;
             producto.Stock_minimo = dto.Stock_minimo;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // PUT: api/productos/5/tarifa
+        // Requerimiento Sprint 2: Actualización de tarifas/precios
+        [HttpPut("{id}/tarifa")]
+        public async Task<IActionResult> ActualizarTarifa(int id, [FromBody] decimal nuevoPrecio)
+        {
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto == null) return NotFound(new { mensaje = "Producto no encontrado" });
+
+            producto.Precio_unitario = nuevoPrecio;
             await _context.SaveChangesAsync();
 
             return NoContent();

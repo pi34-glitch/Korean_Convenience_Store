@@ -4,6 +4,7 @@ using KoreanStoreMvc.Models;
 using KoreanStoreMvc.Filters;
 
 namespace KoreanStoreMvc.Controllers;
+
 [SessionRequired]
 public class HomeController : Controller
 {
@@ -20,6 +21,22 @@ public class HomeController : Controller
     }
 
     public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    // Vistas del prototipo del Sprint 2
+    public IActionResult Tienda()
+    {
+        return View();
+    }
+
+    public IActionResult Tarifas()
+    {
+        return View();
+    }
+
+    public IActionResult AlertasStock()
     {
         return View();
     }

@@ -43,31 +43,62 @@ namespace KoreanStoreApi.Controllers
         }
 
         // POST: api/ventas
+        // Requerimiento Sprint 2: Transacción atómica y descuento automático de inventario
         [HttpPost]
         public async Task<ActionResult<VentaDto>> Create([FromBody] VentaDto dto)
         {
             if (!Enum.TryParse<MetodoPago>(dto.Metodo_pago, out var metodo))
                 return BadRequest(new { mensaje = "Método de pago inválido" });
 
-            var venta = new Venta
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                Id_user = dto.Id_user,
-                Fecha_venta = DateTime.UtcNow,
-                Total = dto.Total,
-                Metodo_pago = metodo,
-                Detalles = dto.Detalles.Select(d => new DetalleVenta
+                var venta = new Venta
                 {
-                    Id_producto = d.Id_producto,
-                    Cantidad_o_gramos = d.Cantidad_o_gramos,
-                    Precio_aplicado = d.Precio_aplicado,
-                    Subtotal = d.Subtotal
-                }).ToList()
-            };
-            _context.Ventas.Add(venta);
-            await _context.SaveChangesAsync();
+                    Id_user = dto.Id_user,
+                    Fecha_venta = DateTime.UtcNow,
+                    Total = dto.Total,
+                    Metodo_pago = metodo,
+                    Detalles = new List<DetalleVenta>()
+                };
 
-            dto.Id_venta = venta.Id_venta;
-            return Ok(dto);
+                foreach (var d in dto.Detalles)
+                {
+                    var producto = await _context.Productos.FindAsync(d.Id_producto);
+                    if (producto == null)
+                    {
+                        return BadRequest(new { mensaje = $"El producto con ID {d.Id_producto} no existe." });
+                    }
+
+                    if (producto.Stock_actual < d.Cantidad_o_gramos)
+                    {
+                        return BadRequest(new { mensaje = $"Stock insuficiente para el producto '{producto.Nombre}'. Disponible: {producto.Stock_actual}" });
+                    }
+
+                    // Descuento atómico de inventario
+                    producto.Stock_actual -= d.Cantidad_o_gramos;
+
+                    venta.Detalles.Add(new DetalleVenta
+                    {
+                        Id_producto = d.Id_producto,
+                        Cantidad_o_gramos = d.Cantidad_o_gramos,
+                        Precio_aplicado = d.Precio_aplicado,
+                        Subtotal = d.Subtotal
+                    });
+                }
+
+                _context.Ventas.Add(venta);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                dto.Id_venta = venta.Id_venta;
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, new { mensaje = "Error interno al procesar la venta", detalle = ex.Message });
+            }
         }
     }
 }
