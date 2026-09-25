@@ -1,0 +1,199 @@
+@model List<KoreanStoreMvc.Models.ProductoModel>
+
+@{
+    ViewData["Title"] = "Panel de Inventarios";
+    var tipoActual = ViewBag.TipoVentaActual as string;
+    var buscar = ViewBag.Buscar as string;
+}
+
+<style>
+    :root {
+        --rojo-bekeenco: #E60000;
+        --rojo-hover: #DC2626;
+        --rojo-alerta: #FEE2E2;
+        --rojo-alerta-texto: #991B1B;
+        --blanco: #FFFFFF;
+        --gris-fondo: #F9FAFB;
+        --negro: #111827;
+        --gris-texto: #4B5563;
+        --gris-borde: #E5E7EB;
+    }
+
+    body { background-color: var(--gris-fondo); font-family: 'Segoe UI', sans-serif; }
+
+    .header-inv {
+        background: var(--blanco);
+        padding: 1.5rem 2rem;
+        border-bottom: 3px solid var(--rojo-bekeenco);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .header-inv h1 { color: var(--rojo-bekeenco); font-size: 1.8rem; font-weight: 700; margin: 0; }
+
+    .btn-nuevo {
+        background: var(--rojo-bekeenco);
+        color: var(--blanco);
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+    .btn-nuevo:hover { background: var(--rojo-hover); color: var(--blanco); }
+
+    .filtros {
+        padding: 1rem 2rem;
+        background: var(--blanco);
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        border-bottom: 1px solid var(--gris-borde);
+    }
+    .filtros select, .filtros input {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--gris-borde);
+        border-radius: 8px;
+        font-size: 0.95rem;
+    }
+    .filtros button {
+        background: var(--rojo-bekeenco);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    .filtros button:hover { background: var(--rojo-hover); }
+
+    .tabla-inv {
+        margin: 2rem;
+        background: var(--blanco);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--rojo-bekeenco); color: var(--blanco); }
+    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--gris-borde); }
+    th { font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    tr.stock-bajo { background-color: var(--rojo-alerta); }
+    tr.stock-bajo td { color: var(--rojo-alerta-texto); font-weight: 600; }
+
+    .badge-alerta {
+        display: inline-block;
+        background: var(--rojo-bekeenco);
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-left: 0.3rem;
+    }
+
+    .acciones a {
+        text-decoration: none;
+        font-size: 1.1rem;
+        margin-right: 0.5rem;
+        padding: 0.3rem 0.5rem;
+        border-radius: 6px;
+        display: inline-block;
+    }
+    .acciones a:hover { background: #F3F4F6; }
+
+    .sin-productos {
+        text-align: center;
+        padding: 3rem;
+        color: var(--gris-texto);
+        background: var(--blanco);
+        margin: 2rem;
+        border-radius: 12px;
+    }
+
+    .error-api {
+        background: #FEE2E2;
+        color: #991B1B;
+        padding: 1rem 2rem;
+        margin: 1rem 2rem;
+        border-radius: 8px;
+        border-left: 4px solid #991B1B;
+    }
+</style>
+
+<div class="header-inv">
+    <h1>🍜 BekeenCo - Panel de Inventarios</h1>
+    <a asp-action="Create" class="btn-nuevo">+ Nuevo Producto</a>
+</div>
+
+@if (ViewBag.Error != null)
+{
+    <div class="error-api">⚠️ @ViewBag.Error</div>
+}
+
+<form method="get" asp-action="Index" class="filtros">
+    <select name="tipoVenta">
+        <option value="">Todos los tipos</option>
+        <option value="Unidad" selected="@(tipoActual == "Unidad")">Unidad</option>
+        <option value="PesoGramos" selected="@(tipoActual == "PesoGramos")">Peso en Gramos</option>
+    </select>
+    <input type="text" name="buscar" value="@buscar" placeholder="🔍 Buscar por nombre..." />
+    <button type="submit">Filtrar</button>
+</form>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="sin-productos">
+        <h3 style="color: var(--rojo-bekeenco);">No hay productos registrados</h3>
+        <p>Comienza agregando tu primer producto con el botón <strong>"+ Nuevo Producto"</strong>.</p>
+    </div>
+}
+else
+{
+    <div class="tabla-inv">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Precio</th>
+                    <th>Stock Actual</th>
+                    <th>Stock Mínimo</th>
+                    <th>Proveedor</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    var stockBajo = p.Stock_actual <= p.Stock_minimo;
+                    <tr class="@(stockBajo ? "stock-bajo" : "")">
+                        <td>@p.Id_producto</td>
+                        <td>@p.Nombre</td>
+                        <td>@p.Tipo_venta</td>
+                        <td>Bs. @p.Precio_unitario.ToString("F2")</td>
+                        <td>
+                            @p.Stock_actual
+                            @if (stockBajo)
+                            {
+                                <span class="badge-alerta">⚠️ BAJO</span>
+                            }
+                        </td>
+                        <td>@p.Stock_minimo</td>
+                        <td>@p.NombreProveedor</td>
+                        <td class="acciones">
+                            <a asp-action="Details" asp-route-id="@p.Id_producto" title="Ver detalles">👁️</a>
+                            <a asp-action="Edit" asp-route-id="@p.Id_producto" title="Editar">✏️</a>
+                            <a asp-action="Delete" asp-route-id="@p.Id_producto" title="Eliminar">🗑️</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
