@@ -1,0 +1,46 @@
+@model KoreanStoreMvc.Controllers.ReporteVentasModel
+
+@{
+    ViewData["Title"] = "Reporte de Ventas";
+}
+
+<div class="container mt-4">
+
+    <h1>Reporte de Ventas</h1>
+
+    <p class="text-muted">
+        Cierre de caja del día: <strong>@Model.Fecha</strong>
+    </p>
+
+    <div class="row mt-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Total de ventas</h5>
+                    <h2>@Model.TotalVentas.ToString("0.00") Bs</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Efectivo</h5>
+                    <h2>@Model.Efectivo.ToString("0.00") Bs</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>QR</h5>
+                    <h2>@Model.Qr.ToString("0.00") Bs</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
