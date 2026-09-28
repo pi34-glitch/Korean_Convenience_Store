@@ -25,7 +25,7 @@ public class HomeController : Controller
         return View();
     }
 
-    // Vistas del prototipo del Sprint 2
+    // Vistas del prototipo del Sprint 2 (se mantienen por compatibilidad)
     public IActionResult Tienda()
     {
         return View();
@@ -36,9 +36,10 @@ public class HomeController : Controller
         return View();
     }
 
+    // Redirige al nuevo controlador de Alertas (Sprint 3 - HU-09)
     public IActionResult AlertasStock()
     {
-        return View();
+        return RedirectToAction("Index", "Alertas");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
