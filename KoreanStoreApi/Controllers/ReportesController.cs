@@ -27,7 +27,8 @@ namespace KoreanStoreApi.Controllers
                 .Where(v => v.Fecha_venta >= hoy &&
                             v.Fecha_venta < mañana &&
                             (v.Metodo_pago == MetodoPago.Efectivo ||
-                            v.Metodo_pago == MetodoPago.QR))
+                            v.Metodo_pago == MetodoPago.QR ||
+                            v.Metodo_pago == MetodoPago.Tarjeta))
                 .ToListAsync();
 
             var totalVentas = ventas.Sum(v => v.Total);
@@ -39,13 +40,18 @@ namespace KoreanStoreApi.Controllers
             var qr = ventas
                 .Where(v => v.Metodo_pago == MetodoPago.QR)
                 .Sum(v => v.Total);
+            
+            var tarjeta = ventas
+                .Where(v => v.Metodo_pago == MetodoPago.Tarjeta)
+                .Sum(v => v.Total);
 
             return Ok(new
             {
                 fecha = hoy.ToString("yyyy-MM-dd"),
                 totalVentas = totalVentas,
                 efectivo = efectivo,
-                qr = qr
+                qr = qr,
+                tarjeta = tarjeta
             });
         }
     }

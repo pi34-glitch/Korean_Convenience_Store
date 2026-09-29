@@ -4,43 +4,335 @@
     ViewData["Title"] = "Reporte de Ventas";
 }
 
-<div class="container mt-4">
+<style>
 
-    <h1>Reporte de Ventas</h1>
+    .reporte-container {
+        padding-top: 25px;
+        padding-bottom: 40px;
+    }
 
-    <p class="text-muted">
-        Cierre de caja del día: <strong>@Model.Fecha</strong>
-    </p>
+    .reporte-header {
+        margin-bottom: 25px;
+    }
 
-    <div class="row mt-4">
+    .reporte-header h1 {
+        font-weight: 600;
+        color: #c62828;
+        margin-bottom: 5px;
+    }
+
+    .reporte-header p {
+        font-size: 16px;
+        margin-bottom: 0;
+    }
+
+    /* TARJETAS DE RESUMEN */
+
+    .estadistica-card {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-top: 4px solid #c62828;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        height: 100%;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .estadistica-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    .estadistica-card .card-body {
+        padding: 22px;
+    }
+
+    .estadistica-card h5 {
+        color: #555555;
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .estadistica-card h2 {
+        color: #c62828;
+        font-size: 30px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* TARJETA SEPARADA */
+
+    .tarjeta-container {
+        margin-top: 20px;
+    }
+
+    .tarjeta-card {
+        max-width: 360px;
+    }
+
+    /* CONTENEDOR DEL GRÁFICO */
+
+    .grafico-card {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-top: 30px;
+    }
+
+    .grafico-card .card-body {
+        padding: 25px;
+    }
+
+    .grafico-titulo {
+        color: #333333;
+        font-size: 21px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .grafico-container {
+        position: relative;
+        height: 350px;
+        width: 100%;
+    }
+
+    /* RESPONSIVE */
+
+    @@media (max-width: 768px) {
+
+        .reporte-header h1 {
+            font-size: 30px;
+        }
+
+        .estadistica-card h2 {
+            font-size: 26px;
+        }
+
+        .tarjeta-card {
+            max-width: 100%;
+        }
+
+        .grafico-container {
+            height: 300px;
+        }
+    }
+
+</style>
+
+
+<div class="container reporte-container">
+
+    <!-- ENCABEZADO -->
+
+    <div class="reporte-header">
+
+        <h1>Reporte de Ventas</h1>
+
+        <p class="text-muted">
+            Cierre de caja del día:
+            <strong>@Model.Fecha</strong>
+        </p>
+
+    </div>
+
+
+    <!-- RESUMEN PRINCIPAL -->
+
+    <div class="row g-4">
+
+        <!-- TOTAL -->
 
         <div class="col-md-4">
-            <div class="card shadow-sm">
+
+            <div class="card estadistica-card">
+
                 <div class="card-body">
+
                     <h5>Total de ventas</h5>
-                    <h2>@Model.TotalVentas.ToString("0.00") Bs</h2>
+
+                    <h2>
+                        @Model.TotalVentas.ToString("0.00") Bs
+                    </h2>
+
                 </div>
+
             </div>
+
         </div>
 
+
+        <!-- EFECTIVO -->
+
         <div class="col-md-4">
-            <div class="card shadow-sm">
+
+            <div class="card estadistica-card">
+
                 <div class="card-body">
+
                     <h5>Efectivo</h5>
-                    <h2>@Model.Efectivo.ToString("0.00") Bs</h2>
+
+                    <h2>
+                        @Model.Efectivo.ToString("0.00") Bs
+                    </h2>
+
                 </div>
+
             </div>
+
         </div>
 
+
+        <!-- QR -->
+
         <div class="col-md-4">
-            <div class="card shadow-sm">
+
+            <div class="card estadistica-card">
+
                 <div class="card-body">
+
                     <h5>QR</h5>
-                    <h2>@Model.Qr.ToString("0.00") Bs</h2>
+
+                    <h2>
+                        @Model.Qr.ToString("0.00") Bs
+                    </h2>
+
                 </div>
+
             </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TARJETA SEPARADA -->
+
+    <div class="tarjeta-container">
+
+        <div class="tarjeta-card">
+
+            <div class="card estadistica-card">
+
+                <div class="card-body">
+
+                    <h5>Tarjeta</h5>
+
+                    <h2>
+                        @Model.Tarjeta.ToString("0.00") Bs
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- GRÁFICO -->
+
+    <div class="card grafico-card">
+
+        <div class="card-body">
+
+            <h4 class="grafico-titulo">
+                Ventas por método de pago
+            </h4>
+
+            <div class="grafico-container">
+
+                <canvas id="graficoVentas"></canvas>
+
+            </div>
+
         </div>
 
     </div>
 
 </div>
+
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+    const efectivo = @Model.Efectivo;
+    const qr = @Model.Qr;
+    const tarjeta = @Model.Tarjeta;
+
+    const ctx = document.getElementById('graficoVentas');
+
+    new Chart(ctx, {
+
+        type: 'bar',
+
+        data: {
+
+            labels: ['Efectivo', 'QR', 'Tarjeta'],
+
+            datasets: [{
+
+                label: 'Ventas (Bs)',
+
+                data: [efectivo, qr, tarjeta],
+
+                backgroundColor: [
+                    '#c62828',
+                    '#ffffff',
+                    '#eeeeee'
+                ],
+
+                borderColor: [
+                    '#c62828',
+                    '#c62828',
+                    '#c62828'
+                ],
+
+                borderWidth: 2
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: true
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' Bs';
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+</script>
