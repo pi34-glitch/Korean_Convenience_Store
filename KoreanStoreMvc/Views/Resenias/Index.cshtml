@@ -1,0 +1,158 @@
+@model List<KoreanStoreMvc.Models.ReseñaModel>
+@{
+    ViewData["Title"] = "Reseñas de Comensales";
+    var producto = ViewBag.Producto as KoreanStoreMvc.Models.ProductoModel;
+    var productoId = ViewBag.ProductoId as int?;
+}
+
+
+@if (TempData["Exito"] != null)
+{
+    <div class="alert-exito">✅ @TempData["Exito"]</div>
+}
+
+<div class="header-resenas">
+    <div>
+        <h1>💬 Reseñas de Comensales</h1>
+        @if (producto != null)
+        {
+            <p class="subtitle">Mostrando reseñas de: <strong>@producto.Nombre</strong></p>
+        }
+        else
+        {
+            <p class="subtitle">Las opiniones de nuestros clientes</p>
+        }
+    </div>
+
+    @if (productoId.HasValue)
+    {
+        <a asp-action="Crear" asp-route-productoId="@productoId" class="btn-nueva">+ Escribir reseña</a>
+    }
+</div>
+
+<div class="resenas-lista">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="sin-resenas">
+            <h3>Aún no hay reseñas</h3>
+            <p>Sé el primero en compartir tu experiencia con este producto.</p>
+        </div>
+    }
+    else
+    {
+        @foreach (var r in Model)
+        {
+            <div class="card-resena">
+                <div class="card-header">
+                    <span class="usuario">👤 @(r.NombreUsuario ?? "Anónimo")</span>
+                    <span class="fecha">📅 @r.Fecha.ToLocalTime().ToString("dd/MM/yyyy")</span>
+                </div>
+
+                <div class="estrellas-vista">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= r.Calificacion)
+                        {
+                            <span>★</span>
+                        }
+                        else
+                        {
+                            <span class="vacia">★</span>
+                        }
+                    }
+                    <span style="color: #4B5563; font-size: 0.85rem; margin-left: 0.5rem;">
+                        (@r.Calificacion/5)
+                    </span>
+                </div>
+
+                <p class="comentario">"@r.Comentario"</p>
+            </div>
+        }
+    }
+</div>
+<style>
+    :root {
+        --rojo-bekeenco: #E60000;
+        --blanco: #FFFFFF;
+        --gris-fondo: #F9FAFB;
+        --gris-texto: #4B5563;
+        --amarillo-estrella: #F59E0B;
+    }
+    body { background: var(--gris-fondo); font-family: 'Segoe UI', sans-serif; }
+
+    .header-resenas {
+        max-width: 800px;
+        margin: 2rem auto 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .header-resenas h1 { color: var(--rojo-bekeenco); margin: 0; font-size: 1.8rem; }
+    .header-resenas .subtitle { color: var(--gris-texto); margin: 0.3rem 0 0; }
+
+    .btn-nueva {
+        background: var(--rojo-bekeenco);
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .btn-nueva:hover { background: #DC2626; color: white; }
+
+    .resenas-lista { max-width: 800px; margin: 0 auto 3rem; }
+
+    .card-resena {
+        background: var(--blanco);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-left: 4px solid var(--rojo-bekeenco);
+    }
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.7rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .usuario { color: var(--gris-texto); font-weight: 600; font-size: 0.95rem; }
+    .fecha { color: #9CA3AF; font-size: 0.85rem; }
+
+    .estrellas-vista { color: var(--amarillo-estrella); font-size: 1.3rem; letter-spacing: 2px; }
+    .estrellas-vista .vacia { color: #D1D5DB; }
+
+    .comentario {
+        color: #111827;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin: 0;
+        font-style: italic;
+    }
+
+    .sin-resenas {
+        text-align: center;
+        padding: 3rem;
+        color: var(--gris-texto);
+        background: var(--blanco);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .sin-resenas h3 { color: var(--rojo-bekeenco); }
+
+    .alert-exito {
+        max-width: 800px;
+        margin: 1rem auto;
+        background: #D1FAE5;
+        color: #065F46;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #065F46;
+        font-weight: 500;
+    }
+</style>

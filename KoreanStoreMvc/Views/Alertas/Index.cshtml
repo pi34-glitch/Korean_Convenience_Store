@@ -1,0 +1,340 @@
+@model List<KoreanStoreMvc.Models.ProductoModel>
+
+@{
+    ViewData["Title"] = "Alertas de Stock Mínimo";
+    var totalCriticos = Model.Count;
+    var totalProductos = Model.Count;
+}
+
+<style>
+    :root {
+        --rojo-bekeenco: #E60000;
+        --rojo-hover: #DC2626;
+        --amarillo-alerta: #F59E0B;
+        --verde-ok: #10B981;
+        --gris-fondo: #F8FAFC;
+        --gris-texto: #4B5563;
+        --negro-texto: #111827;
+        --blanco-puro: #FFFFFF;
+    }
+
+    body { background-color: var(--gris-fondo); font-family: 'Segoe UI', sans-serif; }
+
+    .header-alertas {
+        background-color: var(--blanco-puro);
+        padding: 1.5rem 2rem;
+        border-bottom: 3px solid var(--rojo-bekeenco);
+        margin-bottom: 1.5rem;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .header-alertas h1 {
+        color: var(--rojo-bekeenco);
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0 0 0.3rem 0;
+    }
+
+    .header-alertas p {
+        color: var(--gris-texto);
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .resumen-card {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        padding: 0 1.5rem 1.5rem;
+    }
+
+    .stat-card {
+        background-color: var(--blanco-puro);
+        border-radius: 12px;
+        padding: 1.2rem;
+        border-left: 5px solid var(--rojo-bekeenco);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .stat-card .label {
+        font-size: 0.85rem;
+        color: var(--gris-texto);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-card .valor {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--rojo-bekeenco);
+    }
+
+    .stat-card .icono {
+        font-size: 1.8rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .tabla-container {
+        background-color: var(--blanco-puro);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin: 0 1.5rem 1.5rem;
+    }
+
+    .tabla-alertas {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .tabla-alertas thead {
+        background-color: var(--rojo-bekeenco);
+        color: var(--blanco-puro);
+    }
+
+    .tabla-alertas th {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    .tabla-alertas td {
+        padding: 1rem;
+        border-bottom: 1px solid #E5E7EB;
+        font-size: 0.95rem;
+        color: var(--negro-texto);
+    }
+
+    .tabla-alertas tr:last-child td {
+        border-bottom: none;
+    }
+
+    .tabla-alertas tr:hover {
+        background-color: #FEF2F2;
+    }
+
+    .badge-estado {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-critico {
+        background-color: #FEE2E2;
+        color: #991B1B;
+    }
+
+    .badge-advertencia {
+        background-color: #FEF3C7;
+        color: #92400E;
+    }
+
+    .badge-ok {
+        background-color: #D1FAE5;
+        color: #065F46;
+    }
+
+    .fila-critica {
+        background-color: #FEF2F2;
+    }
+
+    .fila-critica:hover {
+        background-color: #FEE2E2;
+    }
+
+    .sin-alertas {
+        text-align: center;
+        padding: 4rem 2rem;
+        background-color: var(--blanco-puro);
+        border-radius: 12px;
+        margin: 1.5rem;
+    }
+
+    .sin-alertas .icono {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .sin-alertas h2 {
+        color: var(--verde-ok);
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .sin-alertas p {
+        color: var(--gris-texto);
+        font-size: 0.95rem;
+    }
+
+    .btn-ver-productos {
+        display: inline-block;
+        background-color: var(--rojo-bekeenco);
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 1rem;
+        transition: background-color 0.2s;
+    }
+
+    .btn-ver-productos:hover {
+        background-color: var(--rojo-hover);
+        color: white;
+    }
+
+    .alerta-error {
+        background-color: #FEE2E2;
+        color: #B91C1C;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #B91C1C;
+        margin: 1.5rem;
+        font-size: 0.95rem;
+    }
+
+    .barra-progreso {
+        background-color: #E5E7EB;
+        border-radius: 10px;
+        height: 10px;
+        overflow: hidden;
+        min-width: 100px;
+    }
+
+    .barra-progreso .relleno {
+        height: 100%;
+        background-color: var(--rojo-bekeenco);
+        border-radius: 10px;
+        transition: width 0.3s;
+    }
+
+    .porcentaje-stock {
+        font-size: 0.85rem;
+        color: var(--gris-texto);
+        margin-top: 0.3rem;
+    }
+</style>
+
+<div class="container-fluid px-0">
+
+    <!-- Header -->
+    <div class="header-alertas">
+        <h1>🚨 Alertas de Stock Mínimo</h1>
+        <p>Productos que han alcanzado o superado el nivel crítico de existencias y requieren reposición inmediata.</p>
+    </div>
+
+    <!-- Mensaje de error (si falla la API) -->
+    @if (ViewBag.Error != null)
+    {
+        <div class="alerta-error">
+            <strong>⚠️ Error:</strong> @ViewBag.Error
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <!-- Tarjetas de resumen -->
+        <div class="resumen-card">
+            <div class="stat-card">
+                <div class="icono">🚨</div>
+                <div class="label">Productos Críticos</div>
+                <div class="valor">@totalCriticos</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--amarillo-alerta);">
+                <div class="icono">📦</div>
+                <div class="label">Total Alertas</div>
+                <div class="valor" style="color: var(--amarillo-alerta);">@totalProductos</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--gris-texto);">
+                <div class="icono">🕒</div>
+                <div class="label">Última Actualización</div>
+                <div class="valor" style="color: var(--gris-texto); font-size: 1.1rem;">
+                    @DateTime.Now.ToString("HH:mm")
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de productos críticos -->
+        <div class="tabla-container">
+            <table class="tabla-alertas">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Producto</th>
+                        <th>Proveedor</th>
+                        <th>Tipo</th>
+                        <th>Stock Actual</th>
+                        <th>Stock Mínimo</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var producto in Model)
+                    {
+                        var porcentaje = producto.Stock_minimo > 0
+                            ? Math.Min(100, (producto.Stock_actual / producto.Stock_minimo) * 100)
+                            : 0;
+
+                        var esCritico = producto.Stock_actual <= (producto.Stock_minimo / 2);
+                        var claseBadge = esCritico ? "badge-critico" : "badge-advertencia";
+                        var textoEstado = esCritico ? "CRÍTICO" : "LÍMITE";
+                        var claseFila = esCritico ? "fila-critica" : "";
+
+                        <tr class="@claseFila">
+                            <td><strong>#@producto.Id_producto</strong></td>
+                            <td><strong>@producto.Nombre</strong></td>
+                            <td>@(producto.NombreProveedor ?? "—")</td>
+                            <td>
+                                @if (producto.Tipo_venta == "Unidad")
+                                {
+                                    <span>📦 Unidad</span>
+                                }
+                                else
+                                {
+                                    <span>⚖️ Por Peso</span>
+                                }
+                            </td>
+                            <td>
+                                <strong style="color: var(--rojo-bekeenco);">
+                                    @producto.Stock_actual.ToString("0.##")
+                                </strong>
+                                <div class="barra-progreso" style="margin-top: 0.3rem;">
+                                    <div class="relleno" style="width: @porcentaje.ToString("0")%;"></div>
+                                </div>
+                                <div class="porcentaje-stock">@porcentaje.ToString("0")% del mínimo</div>
+                            </td>
+                            <td>@producto.Stock_minimo.ToString("0.##")</td>
+                            <td>
+                                <span class="badge-estado @claseBadge">@textoEstado</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <!-- Estado vacío: no hay alertas -->
+        <div class="sin-alertas">
+            <div class="icono">✅</div>
+            <h2>¡Todo en orden!</h2>
+            <p>No hay productos con stock crítico en este momento.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+                Todos los productos tienen existencias por encima del stock mínimo establecido.
+            </p>
+            <a href="/Home/Index" class="btn-ver-productos">
+                🏠 Volver al inicio
+            </a>
+        </div>
+    }
+
+</div>
