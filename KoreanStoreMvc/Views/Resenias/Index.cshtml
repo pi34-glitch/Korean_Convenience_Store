@@ -1,0 +1,172 @@
+@model List<KoreanStoreMvc.Models.ProductoModel>
+
+@{
+    ViewData["Title"] = "Reseñas de Comensales";
+}
+
+<div class="container-resenias">
+    <div class="header-resenias text-center mb-4">
+        <h1 class="titulo-resenias">Reseñas de Comensales</h1>
+        <p class="subtitulo-resenias">Selecciona un producto para ver o escribir tu opinión.</p>
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert-exito">@TempData["Exito"]</div>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert-error">@ViewBag.Error</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="sin-resenas">
+            <h3>No hay productos disponibles</h3>
+            <p>Vuelve más tarde cuando el catálogo esté cargado.</p>
+        </div>
+    }
+    else
+    {
+        <div class="grid-productos">
+            @foreach (var producto in Model)
+            {
+                <a asp-action="PorProducto" asp-route-id="@producto.Id_producto" class="card-producto-resenia">
+                    <div class="card-body">
+                        <h3>@producto.Nombre</h3>
+                        <p class="precio">Bs. @producto.Precio_unitario.ToString("0.00")</p>
+                        <div class="estrellas-promedio">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span class="@(i <= 4 ? "activa" : "vacia")">★</span>
+                            }
+                            <span class="promedio-texto">Ver reseñas</span>
+                        </div>
+                        <button class="btn-ver-resenias">
+                            <i class="bi bi-chat-left-text me-1"></i> Ver Reseñas
+                        </button>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .container-resenias {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .titulo-resenias {
+        color: #E60000;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitulo-resenias { color: #6B7280; font-size: 1rem; }
+
+    .alert-exito {
+        background: #D1FAE5;
+        color: #065F46;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid #065F46;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+    }
+
+    .alert-error {
+        background: #FEE2E2;
+        color: #B91C1C;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid #B91C1C;
+        margin-bottom: 1.5rem;
+    }
+
+    .grid-productos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .card-producto-resenia {
+        text-decoration: none;
+        color: inherit;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: block;
+    }
+
+    .card-producto-resenia:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(230, 0, 0, 0.15);
+        color: inherit;
+    }
+
+    .card-body { padding: 20px; }
+
+    .card-body h3 {
+        color: #111827;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+    }
+
+    .precio {
+        color: #E60000;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .estrellas-promedio {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 16px;
+    }
+
+    .estrellas-promedio .activa { color: #F59E0B; font-size: 1.2rem; }
+    .estrellas-promedio .vacia { color: #D1D5DB; font-size: 1.2rem; }
+
+    .promedio-texto {
+        color: #9CA3AF;
+        font-size: 0.8rem;
+        margin-left: 8px;
+    }
+
+    .btn-ver-resenias {
+        width: 100%;
+        padding: 10px;
+        background: #E60000;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .btn-ver-resenias:hover { background: #B80000; }
+
+    .sin-resenas {
+        text-align: center;
+        padding: 3rem;
+        color: #6B7280;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .sin-resenas h3 { color: #E60000; }
+</style>

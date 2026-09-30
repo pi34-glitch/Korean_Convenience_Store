@@ -2,86 +2,365 @@
 
 @{
     ViewData["Title"] = "Alertas de Stock Mínimo";
-    var totalCriticos = Model.Count;
-    var totalProductos = Model.Count;
+    var totalCriticos = Model.Count(p => p.Stock_actual <= (p.Stock_minimo / 2));
+    var totalLimite = Model.Count(p => p.Stock_actual > (p.Stock_minimo / 2) && p.Stock_actual <= p.Stock_minimo);
+    var totalAlertas = Model.Count;
 }
 
+<div class="alertas-page">
+
+    <!-- HEADER -->
+    <div class="alertas-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div>
+                <h1>Alertas de Stock Mínimo</h1>
+                <p>Productos que han alcanzado o superado el nivel crítico de existencias y requieren reposición inmediata.</p>
+            </div>
+        </div>
+        <div class="header-meta">
+            <div class="meta-item">
+                <i class="bi bi-clock-history"></i>
+                <span>@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert-error">
+            <i class="bi bi-exclamation-triangle me-2"></i> @ViewBag.Error
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <!-- KPIs -->
+        <div class="kpis-grid">
+            <div class="kpi-card critico">
+                <div class="kpi-icon">
+                    <i class="bi bi-fire"></i>
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-label">Críticos</span>
+                    <span class="kpi-value">@totalCriticos</span>
+                </div>
+            </div>
+
+            <div class="kpi-card limite">
+                <div class="kpi-icon">
+                    <i class="bi bi-exclamation-circle"></i>
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-label">En el límite</span>
+                    <span class="kpi-value">@totalLimite</span>
+                </div>
+            </div>
+
+            <div class="kpi-card total">
+                <div class="kpi-icon">
+                    <i class="bi bi-clipboard-data"></i>
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-label">Total alertas</span>
+                    <span class="kpi-value">@totalAlertas</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA -->
+        <div class="tabla-card">
+            <div class="tabla-card-header">
+                <h2>
+                    <i class="bi bi-list-check me-2"></i>
+                    Productos que requieren reposición
+                </h2>
+                <span class="tabla-count">@totalAlertas producto(s)</span>
+            </div>
+
+            <div class="tabla-responsive">
+                <table class="tabla-alertas">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Producto</th>
+                            <th>Proveedor</th>
+                            <th>Tipo</th>
+                            <th>Stock Actual</th>
+                            <th>Stock Mínimo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var producto in Model)
+                        {
+                            var porcentaje = producto.Stock_minimo > 0
+                                ? Math.Min(100, (producto.Stock_actual / producto.Stock_minimo) * 100)
+                                : 0;
+
+                            var esCritico = producto.Stock_actual <= (producto.Stock_minimo / 2);
+                            var badgeClass = esCritico ? "badge-critico" : "badge-limite";
+                            var badgeText = esCritico ? "CRÍTICO" : "LÍMITE";
+                            var rowClass = esCritico ? "row-critico" : "row-limite";
+
+                            <tr class="@rowClass">
+                                <td>
+                                    <span class="id-badge">#@producto.Id_producto</span>
+                                </td>
+                                <td>
+                                    <div class="producto-nombre">
+                                        <strong>@producto.Nombre</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="proveedor-tag">
+                                        <i class="bi bi-truck me-1"></i>
+                                        @(producto.NombreProveedor ?? "—")
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (producto.Tipo_venta == "Unidad")
+                                    {
+                                        <span class="tipo-badge unidad">
+                                            <i class="bi bi-box me-1"></i> Unidad
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="tipo-badge peso">
+                                            <i class="bi bi-speedometer2 me-1"></i> Peso
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="stock-cell">
+                                        <div class="stock-valor">
+                                            <strong>@producto.Stock_actual.ToString("0.##")</strong>
+                                        </div>
+                                        <div class="stock-bar">
+                                            <div class="stock-bar-fill @(esCritico ? "critico" : "limite")"
+                                                 style="width: @porcentaje.ToString("0")%;"></div>
+                                        </div>
+                                        <small class="stock-porcentaje">@porcentaje.ToString("0")% del mínimo</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="stock-minimo">@producto.Stock_minimo.ToString("0.##")</span>
+                                </td>
+                                <td>
+                                    <span class="badge-estado @badgeClass">
+                                        @if (esCritico)
+                                        {
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-exclamation-circle-fill me-1"></i>
+                                        }
+                                        @badgeText
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- ESTADO VACÍO -->
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h2>¡Todo en orden!</h2>
+            <p>No hay productos con stock crítico en este momento.</p>
+            <p class="empty-sub">Todos los productos tienen existencias por encima del stock mínimo establecido.</p>
+            <a href="/Home/Index" class="btn-volver">
+                <i class="bi bi-house-door me-1"></i> Volver al inicio
+            </a>
+        </div>
+    }
+
+</div>
+
 <style>
-    :root {
-        --rojo-bekeenco: #E60000;
-        --rojo-hover: #DC2626;
-        --amarillo-alerta: #F59E0B;
-        --verde-ok: #10B981;
-        --gris-fondo: #F8FAFC;
-        --gris-texto: #4B5563;
-        --negro-texto: #111827;
-        --blanco-puro: #FFFFFF;
+    body {
+        background: #F9FAFB;
+        font-family: 'Poppins', sans-serif;
     }
 
-    body { background-color: var(--gris-fondo); font-family: 'Segoe UI', sans-serif; }
-
-    .header-alertas {
-        background-color: var(--blanco-puro);
-        padding: 1.5rem 2rem;
-        border-bottom: 3px solid var(--rojo-bekeenco);
-        margin-bottom: 1.5rem;
-        border-radius: 12px 12px 0 0;
+    .alertas-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px 40px;
     }
 
-    .header-alertas h1 {
-        color: var(--rojo-bekeenco);
+    /* ===== HEADER ===== */
+    .alertas-header {
+        background: linear-gradient(135deg, #E60000, #B80000);
+        color: white;
+        padding: 2rem;
+        border-radius: 0 0 24px 24px;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        box-shadow: 0 6px 20px rgba(230, 0, 0, 0.2);
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+    }
+
+    .header-icon {
+        width: 64px;
+        height: 64px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        backdrop-filter: blur(10px);
+        animation: pulse-icon 2s infinite;
+    }
+
+    @@keyframes pulse-icon {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .header-content h1 {
         font-size: 1.8rem;
         font-weight: 700;
         margin: 0 0 0.3rem 0;
     }
 
-    .header-alertas p {
-        color: var(--gris-texto);
+    .header-content p {
         margin: 0;
         font-size: 0.95rem;
+        opacity: 0.9;
+        max-width: 600px;
     }
 
-    .resumen-card {
+    .header-meta .meta-item {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        backdrop-filter: blur(10px);
+    }
+
+    /* ===== KPIs ===== */
+    .kpis-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1rem;
-        padding: 0 1.5rem 1.5rem;
+        gap: 1.2rem;
+        margin-bottom: 2rem;
     }
 
-    .stat-card {
-        background-color: var(--blanco-puro);
-        border-radius: 12px;
-        padding: 1.2rem;
-        border-left: 5px solid var(--rojo-bekeenco);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    .kpi-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-left: 5px solid;
     }
 
-    .stat-card .label {
-        font-size: 0.85rem;
-        color: var(--gris-texto);
+    .kpi-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+    }
+
+    .kpi-card.critico { border-left-color: #E60000; }
+    .kpi-card.limite { border-left-color: #F59E0B; }
+    .kpi-card.total { border-left-color: #6B7280; }
+
+    .kpi-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .kpi-card.critico .kpi-icon { background: linear-gradient(135deg, #E60000, #B80000); }
+    .kpi-card.limite .kpi-icon { background: linear-gradient(135deg, #F59E0B, #D97706); }
+    .kpi-card.total .kpi-icon { background: linear-gradient(135deg, #6B7280, #4B5563); }
+
+    .kpi-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .kpi-label {
+        font-size: 0.8rem;
+        color: #6B7280;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        margin-bottom: 0.5rem;
+        font-weight: 600;
     }
 
-    .stat-card .valor {
+    .kpi-value {
         font-size: 2rem;
         font-weight: 700;
-        color: var(--rojo-bekeenco);
+        color: #111827;
+        line-height: 1.1;
     }
 
-    .stat-card .icono {
-        font-size: 1.8rem;
-        margin-bottom: 0.3rem;
-    }
-
-    .tabla-container {
-        background-color: var(--blanco-puro);
-        border-radius: 12px;
+    /* ===== TABLA ===== */
+    .tabla-card {
+        background: white;
+        border-radius: 18px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        margin: 0 1.5rem 1.5rem;
     }
+
+    .tabla-card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #F3F4F6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .tabla-card-header h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #111827;
+        margin: 0;
+    }
+
+    .tabla-count {
+        background: #FEF2F2;
+        color: #E60000;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .tabla-responsive { overflow-x: auto; }
 
     .tabla-alertas {
         width: 100%;
@@ -89,252 +368,209 @@
     }
 
     .tabla-alertas thead {
-        background-color: var(--rojo-bekeenco);
-        color: var(--blanco-puro);
+        background: #F9FAFB;
     }
 
     .tabla-alertas th {
-        padding: 1rem;
+        padding: 1rem 1.2rem;
         text-align: left;
-        font-size: 0.9rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-weight: 600;
+        color: #6B7280;
+        border-bottom: 1px solid #E5E7EB;
     }
 
     .tabla-alertas td {
-        padding: 1rem;
-        border-bottom: 1px solid #E5E7EB;
-        font-size: 0.95rem;
-        color: var(--negro-texto);
+        padding: 1.2rem;
+        border-bottom: 1px solid #F3F4F6;
+        font-size: 0.9rem;
+        color: #111827;
+        vertical-align: middle;
     }
 
-    .tabla-alertas tr:last-child td {
-        border-bottom: none;
+    .tabla-alertas tr:last-child td { border-bottom: none; }
+
+    .tabla-alertas tbody tr {
+        transition: background 0.2s;
     }
 
-    .tabla-alertas tr:hover {
-        background-color: #FEF2F2;
+    .row-critico { background: #FFF5F5; }
+    .row-critico:hover { background: #FEE2E2; }
+
+    .row-limite { background: #FFFBEB; }
+    .row-limite:hover { background: #FEF3C7; }
+
+    .id-badge {
+        background: #F3F4F6;
+        color: #4B5563;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.8rem;
+    }
+
+    .producto-nombre strong {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .proveedor-tag {
+        color: #6B7280;
+        font-size: 0.85rem;
+    }
+
+    .tipo-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .tipo-badge.unidad { background: #DBEAFE; color: #1E40AF; }
+    .tipo-badge.peso { background: #FEF3C7; color: #92400E; }
+
+    .stock-cell { min-width: 140px; }
+
+    .stock-valor strong {
+        color: #E60000;
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+
+    .stock-bar {
+        height: 8px;
+        background: #F3F4F6;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 6px 0 4px;
+    }
+
+    .stock-bar-fill {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.6s ease;
+    }
+
+    .stock-bar-fill.critico {
+        background: linear-gradient(90deg, #E60000, #B80000);
+        animation: pulse-bar 1.5s infinite;
+    }
+
+    .stock-bar-fill.limite {
+        background: linear-gradient(90deg, #F59E0B, #D97706);
+    }
+
+    @@keyframes pulse-bar {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .stock-porcentaje {
+        color: #9CA3AF;
+        font-size: 0.75rem;
+    }
+
+    .stock-minimo {
+        color: #6B7280;
+        font-weight: 600;
     }
 
     .badge-estado {
-        display: inline-block;
-        padding: 0.35rem 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
         border-radius: 20px;
-        font-size: 0.8rem;
+        font-size: 0.72rem;
         font-weight: 700;
-        text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
     .badge-critico {
-        background-color: #FEE2E2;
-        color: #991B1B;
+        background: #E60000;
+        color: white;
+        animation: pulse-badge 1.5s infinite;
     }
 
-    .badge-advertencia {
-        background-color: #FEF3C7;
-        color: #92400E;
+    .badge-limite {
+        background: #F59E0B;
+        color: white;
     }
 
-    .badge-ok {
-        background-color: #D1FAE5;
-        color: #065F46;
+    @@keyframes pulse-badge {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
     }
 
-    .fila-critica {
-        background-color: #FEF2F2;
-    }
-
-    .fila-critica:hover {
-        background-color: #FEE2E2;
-    }
-
-    .sin-alertas {
-        text-align: center;
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+        background: white;
+        border-radius: 20px;
         padding: 4rem 2rem;
-        background-color: var(--blanco-puro);
-        border-radius: 12px;
-        margin: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
 
-    .sin-alertas .icono {
+    .empty-icon {
         font-size: 4rem;
+        color: #10B981;
         margin-bottom: 1rem;
     }
 
-    .sin-alertas h2 {
-        color: var(--verde-ok);
-        font-size: 1.5rem;
+    .empty-state h2 {
+        color: #10B981;
+        font-size: 1.6rem;
+        font-weight: 700;
         margin-bottom: 0.5rem;
     }
 
-    .sin-alertas p {
-        color: var(--gris-texto);
-        font-size: 0.95rem;
+    .empty-state p {
+        color: #6B7280;
+        margin: 0.3rem 0;
     }
 
-    .btn-ver-productos {
-        display: inline-block;
-        background-color: var(--rojo-bekeenco);
+    .empty-sub {
+        font-size: 0.85rem;
+        color: #9CA3AF;
+    }
+
+    .btn-volver {
+        display: inline-flex;
+        align-items: center;
+        background: #E60000;
         color: white;
-        padding: 0.7rem 1.5rem;
-        border-radius: 8px;
+        padding: 0.8rem 1.8rem;
+        border-radius: 12px;
         text-decoration: none;
         font-weight: 600;
-        margin-top: 1rem;
-        transition: background-color 0.2s;
+        margin-top: 1.5rem;
+        transition: all 0.2s;
     }
 
-    .btn-ver-productos:hover {
-        background-color: var(--rojo-hover);
+    .btn-volver:hover {
+        background: #B80000;
         color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3);
     }
 
-    .alerta-error {
-        background-color: #FEE2E2;
+    .alert-error {
+        background: #FEE2E2;
         color: #B91C1C;
         padding: 1rem 1.5rem;
-        border-radius: 8px;
+        border-radius: 12px;
         border-left: 4px solid #B91C1C;
-        margin: 1.5rem;
-        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
     }
 
-    .barra-progreso {
-        background-color: #E5E7EB;
-        border-radius: 10px;
-        height: 10px;
-        overflow: hidden;
-        min-width: 100px;
-    }
-
-    .barra-progreso .relleno {
-        height: 100%;
-        background-color: var(--rojo-bekeenco);
-        border-radius: 10px;
-        transition: width 0.3s;
-    }
-
-    .porcentaje-stock {
-        font-size: 0.85rem;
-        color: var(--gris-texto);
-        margin-top: 0.3rem;
+    @@media (max-width: 768px) {
+        .alertas-header { padding: 1.5rem; }
+        .header-icon { width: 50px; height: 50px; font-size: 1.4rem; }
+        .header-content h1 { font-size: 1.4rem; }
+        .kpi-value { font-size: 1.6rem; }
+        .tabla-alertas th, .tabla-alertas td { padding: 0.8rem; font-size: 0.85rem; }
     }
 </style>
-
-<div class="container-fluid px-0">
-
-    <!-- Header -->
-    <div class="header-alertas">
-        <h1>🚨 Alertas de Stock Mínimo</h1>
-        <p>Productos que han alcanzado o superado el nivel crítico de existencias y requieren reposición inmediata.</p>
-    </div>
-
-    <!-- Mensaje de error (si falla la API) -->
-    @if (ViewBag.Error != null)
-    {
-        <div class="alerta-error">
-            <strong>⚠️ Error:</strong> @ViewBag.Error
-        </div>
-    }
-
-    @if (Model.Any())
-    {
-        <!-- Tarjetas de resumen -->
-        <div class="resumen-card">
-            <div class="stat-card">
-                <div class="icono">🚨</div>
-                <div class="label">Productos Críticos</div>
-                <div class="valor">@totalCriticos</div>
-            </div>
-            <div class="stat-card" style="border-left-color: var(--amarillo-alerta);">
-                <div class="icono">📦</div>
-                <div class="label">Total Alertas</div>
-                <div class="valor" style="color: var(--amarillo-alerta);">@totalProductos</div>
-            </div>
-            <div class="stat-card" style="border-left-color: var(--gris-texto);">
-                <div class="icono">🕒</div>
-                <div class="label">Última Actualización</div>
-                <div class="valor" style="color: var(--gris-texto); font-size: 1.1rem;">
-                    @DateTime.Now.ToString("HH:mm")
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabla de productos críticos -->
-        <div class="tabla-container">
-            <table class="tabla-alertas">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Producto</th>
-                        <th>Proveedor</th>
-                        <th>Tipo</th>
-                        <th>Stock Actual</th>
-                        <th>Stock Mínimo</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var producto in Model)
-                    {
-                        var porcentaje = producto.Stock_minimo > 0
-                            ? Math.Min(100, (producto.Stock_actual / producto.Stock_minimo) * 100)
-                            : 0;
-
-                        var esCritico = producto.Stock_actual <= (producto.Stock_minimo / 2);
-                        var claseBadge = esCritico ? "badge-critico" : "badge-advertencia";
-                        var textoEstado = esCritico ? "CRÍTICO" : "LÍMITE";
-                        var claseFila = esCritico ? "fila-critica" : "";
-
-                        <tr class="@claseFila">
-                            <td><strong>#@producto.Id_producto</strong></td>
-                            <td><strong>@producto.Nombre</strong></td>
-                            <td>@(producto.NombreProveedor ?? "—")</td>
-                            <td>
-                                @if (producto.Tipo_venta == "Unidad")
-                                {
-                                    <span>📦 Unidad</span>
-                                }
-                                else
-                                {
-                                    <span>⚖️ Por Peso</span>
-                                }
-                            </td>
-                            <td>
-                                <strong style="color: var(--rojo-bekeenco);">
-                                    @producto.Stock_actual.ToString("0.##")
-                                </strong>
-                                <div class="barra-progreso" style="margin-top: 0.3rem;">
-                                    <div class="relleno" style="width: @porcentaje.ToString("0")%;"></div>
-                                </div>
-                                <div class="porcentaje-stock">@porcentaje.ToString("0")% del mínimo</div>
-                            </td>
-                            <td>@producto.Stock_minimo.ToString("0.##")</td>
-                            <td>
-                                <span class="badge-estado @claseBadge">@textoEstado</span>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-    else
-    {
-        <!-- Estado vacío: no hay alertas -->
-        <div class="sin-alertas">
-            <div class="icono">✅</div>
-            <h2>¡Todo en orden!</h2>
-            <p>No hay productos con stock crítico en este momento.</p>
-            <p style="margin-top: 0.5rem; font-size: 0.85rem;">
-                Todos los productos tienen existencias por encima del stock mínimo establecido.
-            </p>
-            <a href="/Home/Index" class="btn-ver-productos">
-                🏠 Volver al inicio
-            </a>
-        </div>
-    }
-
-</div>

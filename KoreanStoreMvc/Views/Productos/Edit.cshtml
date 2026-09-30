@@ -4,121 +4,128 @@
     ViewData["Title"] = "Editar Producto";
 }
 
-<style>
-    body { background: #F9FAFB; font-family: 'Segoe UI', sans-serif; }
-    .form-container {
-        max-width: 700px;
-        margin: 2rem auto;
-        background: #FFFFFF;
-        padding: 2rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .form-container h1 { color: #E60000; margin-bottom: 0.5rem; }
-    .form-container p.subtitle { color: #4B5563; margin-bottom: 1.5rem; }
-
-    .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; color: #4B5563; font-weight: 600; margin-bottom: 0.3rem; }
-    .form-group input, .form-group select {
-        width: 100%;
-        padding: 0.6rem;
-        border: 1px solid #D1D5DB;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        box-sizing: border-box;
-    }
-    .form-group input:focus, .form-group select:focus {
-        outline: none;
-        border-color: #E60000;
-        box-shadow: 0 0 0 3px rgba(230,0,0,0.1);
-    }
-    .text-danger { color: #B91C1C; font-size: 0.85rem; display: block; margin-top: 0.2rem; }
-
-    .btn-submit {
-        background: #E60000;
-        color: white;
-        border: none;
-        padding: 0.8rem 2rem;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 1rem;
-        font-size: 1rem;
-    }
-    .btn-submit:hover { background: #DC2626; }
-    .btn-cancelar {
-        display: block;
-        text-align: center;
-        margin-top: 1rem;
-        color: #4B5563;
-        text-decoration: none;
-    }
-    .error-api {
-        background: #FEE2E2;
-        color: #991B1B;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        border-left: 4px solid #991B1B;
-    }
-</style>
-
-<div class="form-container">
-    <h1>✏️ Editar Producto #@Model.Id_producto</h1>
-    <p class="subtitle">Modifique los datos del producto y guarde los cambios.</p>
+<div class="form-page">
+    <div class="form-header">
+        <a asp-action="Index" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Volver al inventario
+        </a>
+        <h1><i class="bi bi-pencil-square me-2"></i>Editar Producto</h1>
+        <p>Modificando producto <strong>#@Model.Id_producto</strong></p>
+    </div>
 
     @if (ViewBag.Error != null)
     {
-        <div class="error-api">⚠️ @ViewBag.Error</div>
+        <div class="alert-error">
+            <i class="bi bi-exclamation-triangle me-2"></i> @ViewBag.Error
+        </div>
     }
 
-    <form asp-action="Edit" asp-route-id="@Model.Id_producto" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="Id_producto" />
+    <div class="form-card">
+        <form asp-action="Edit" asp-route-id="@Model.Id_producto" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id_producto" />
 
-        <div class="form-group">
-            <label asp-for="Nombre">Nombre del producto *</label>
-            <input asp-for="Nombre" />
-            <span asp-validation-for="Nombre" class="text-danger"></span>
-        </div>
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="bi bi-info-circle me-2"></i>Información básica
+                </h3>
 
-        <div class="form-group">
-            <label asp-for="Id_proveedor">Proveedor *</label>
-            <select asp-for="Id_proveedor" asp-items="ViewBag.Proveedores">
-                <option value="">-- Seleccione un proveedor --</option>
-            </select>
-            <span asp-validation-for="Id_proveedor" class="text-danger"></span>
-        </div>
+                <div class="form-group">
+                    <label asp-for="Nombre">
+                        <i class="bi bi-tag me-1"></i> Nombre del producto *
+                    </label>
+                    <input asp-for="Nombre" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
 
-        <div class="form-group">
-            <label asp-for="Tipo_venta">Tipo de venta *</label>
-            <select asp-for="Tipo_venta">
-                <option value="Unidad">Unidad</option>
-                <option value="Kilo">Peso en Gramos</option>
-            </select>
-            <span asp-validation-for="Tipo_venta" class="text-danger"></span>
-        </div>
+                <div class="form-group">
+                    <label asp-for="Id_proveedor">
+                        <i class="bi bi-truck me-1"></i> Proveedor *
+                    </label>
+                    <select asp-for="Id_proveedor" asp-items="ViewBag.Proveedores">
+                        <option value="">-- Seleccione un proveedor --</option>
+                    </select>
+                    <span asp-validation-for="Id_proveedor" class="text-danger"></span>
+                </div>
 
-        <div class="form-group">
-            <label asp-for="Precio_unitario">Precio unitario (Bs.) *</label>
-            <input asp-for="Precio_unitario" type="number" step="0.01" min="0.01" />
-            <span asp-validation-for="Precio_unitario" class="text-danger"></span>
-        </div>
+                <div class="form-group">
+                    <label asp-for="Tipo_venta">
+                        <i class="bi bi-tags me-1"></i> Tipo de venta *
+                    </label>
+                    <select asp-for="Tipo_venta">
+                        <option value="Unidad">Unidad</option>
+                        <option value="Kilo">Peso en Gramos</option>
+                    </select>
+                    <span asp-validation-for="Tipo_venta" class="text-danger"></span>
+                </div>
+            </div>
 
-        <div class="form-group">
-            <label asp-for="Stock_actual">Stock actual *</label>
-            <input asp-for="Stock_actual" type="number" step="0.01" min="0" />
-            <span asp-validation-for="Stock_actual" class="text-danger"></span>
-        </div>
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="bi bi-cash-coin me-2"></i>Precio y stock
+                </h3>
 
-        <div class="form-group">
-            <label asp-for="Stock_minimo">Stock mínimo *</label>
-            <input asp-for="Stock_minimo" type="number" step="0.01" min="0" />
-            <span asp-validation-for="Stock_minimo" class="text-danger"></span>
-        </div>
+                <div class="form-group">
+                    <label asp-for="Precio_unitario">
+                        <i class="bi bi-currency-dollar me-1"></i> Precio unitario (Bs.) *
+                    </label>
+                    <input asp-for="Precio_unitario" type="number" step="0.01" min="0.01" />
+                    <span asp-validation-for="Precio_unitario" class="text-danger"></span>
+                </div>
 
-        <button type="submit" class="btn-submit">💾 Guardar Cambios</button>
-        <a asp-action="Index" class="btn-cancelar">← Cancelar y volver al inventario</a>
-    </form>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="Stock_actual">
+                            <i class="bi bi-box me-1"></i> Stock actual *
+                        </label>
+                        <input asp-for="Stock_actual" type="number" step="0.01" min="0" />
+                        <span asp-validation-for="Stock_actual" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Stock_minimo">
+                            <i class="bi bi-exclamation-triangle me-1"></i> Stock mínimo *
+                        </label>
+                        <input asp-for="Stock_minimo" type="number" step="0.01" min="0" />
+                        <span asp-validation-for="Stock_minimo" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="bi bi-save me-1"></i> Guardar Cambios
+                </button>
+                <a asp-action="Index" class="btn-cancel">Cancelar</a>
+            </div>
+        </form>
+    </div>
 </div>
+
+<!-- Reutiliza el mismo <style> que Create.cshtml -->
+<style>
+    body { background: #F9FAFB; font-family: 'Poppins', sans-serif; }
+    .form-page { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    .form-header { margin-bottom: 1.5rem; }
+    .btn-back { display: inline-flex; align-items: center; gap: 6px; color: #6B7280; text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-bottom: 1rem; transition: color 0.2s; }
+    .btn-back:hover { color: #E60000; }
+    .form-header h1 { color: #E60000; font-size: 2rem; font-weight: 700; margin: 0 0 0.3rem 0; }
+    .form-header p { color: #6B7280; margin: 0; }
+    .form-card { background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); overflow: hidden; }
+    .form-section { padding: 1.8rem 2rem; border-bottom: 1px solid #F3F4F6; }
+    .form-section:last-of-type { border-bottom: none; }
+    .section-title { color: #111827; font-size: 1rem; font-weight: 600; margin: 0 0 1.2rem 0; padding-bottom: 0.6rem; border-bottom: 2px solid #FEF2F2; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; color: #374151; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .form-group input, .form-group select { width: 100%; padding: 0.8rem 1rem; border: 2px solid #E5E7EB; border-radius: 10px; font-size: 0.95rem; font-family: inherit; transition: all 0.2s; box-sizing: border-box; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #E60000; box-shadow: 0 0 0 3px rgba(230, 0, 0, 0.1); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .text-danger { color: #B91C1C; font-size: 0.82rem; display: block; margin-top: 0.3rem; }
+    .form-actions { padding: 1.5rem 2rem; background: #F9FAFB; display: flex; gap: 1rem; justify-content: flex-end; }
+    .btn-submit { background: #E60000; color: white; border: none; padding: 0.8rem 2rem; border-radius: 10px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+    .btn-submit:hover { background: #B80000; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3); }
+    .btn-cancel { background: white; color: #6B7280; border: 2px solid #E5E7EB; padding: 0.8rem 2rem; border-radius: 10px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+    .btn-cancel:hover { border-color: #E60000; color: #E60000; }
+    .alert-error { background: #FEE2E2; color: #991B1B; border-left: 4px solid #991B1B; padding: 1rem 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; font-size: 0.9rem; }
+    @@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+</style>

@@ -3,100 +3,281 @@
 @{
     ViewData["Title"] = "Detalle del Producto";
     var stockBajo = Model.Stock_actual <= Model.Stock_minimo;
+    var porcentajeStock = Model.Stock_minimo > 0 
+        ? Math.Min(100, (double)(Model.Stock_actual / Model.Stock_minimo) * 100) 
+        : 100;
 }
 
-<style>
-    body { background: #F9FAFB; font-family: 'Segoe UI', sans-serif; }
-    .detalle {
-        max-width: 700px;
-        margin: 2rem auto;
-        background: #FFFFFF;
-        padding: 2rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .detalle h1 { color: #E60000; margin-bottom: 1.5rem; }
-    .fila {
-        display: flex;
-        justify-content: space-between;
-        padding: 1rem;
-        border-bottom: 1px solid #E5E7EB;
-    }
-    .fila:last-child { border-bottom: none; }
-    .fila strong { color: #4B5563; font-weight: 600; }
-    .fila span { color: #111827; }
-    .alerta-stock {
-        background: #FEE2E2;
-        color: #991B1B;
-        padding: 0.8rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        border-left: 4px solid #991B1B;
-        font-weight: 600;
-    }
-    .acciones {
-        margin-top: 1.5rem;
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-    .btn {
-        padding: 0.7rem 1.5rem;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        display: inline-block;
-    }
-    .btn-primary { background: #E60000; color: white; }
-    .btn-primary:hover { background: #DC2626; color: white; }
-    .btn-secondary { background: #E5E7EB; color: #111827; }
-    .btn-secondary:hover { background: #D1D5DB; color: #111827; }
-    .btn-danger { background: #991B1B; color: white; }
-    .btn-danger:hover { background: #7F1D1D; color: white; }
-</style>
+<div class="detail-page">
+    <div class="detail-header">
+        <a asp-action="Index" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Volver al inventario
+        </a>
+    </div>
 
-<div class="detalle">
-    <h1>📋 Detalle del Producto</h1>
-
-    @if (stockBajo)
-    {
-        <div class="alerta-stock">
-            ⚠️ <strong>Alerta:</strong> El stock actual (@Model.Stock_actual) está por debajo del mínimo (@Model.Stock_minimo).
+    <div class="detail-card">
+        <div class="detail-hero">
+            <div class="hero-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+            <div class="hero-info">
+                <h1>@Model.Nombre</h1>
+                <div class="hero-meta">
+                    <span class="meta-badge">#@Model.Id_producto</span>
+                    <span class="meta-badge tipo">@Model.Tipo_venta</span>
+                </div>
+            </div>
+            <div class="hero-price">
+                <span class="price-label">Precio</span>
+                <span class="price-value">Bs. @Model.Precio_unitario.ToString("F2")</span>
+            </div>
         </div>
-    }
 
-    <div class="fila">
-        <strong>ID:</strong>
-        <span>@Model.Id_producto</span>
-    </div>
-    <div class="fila">
-        <strong>Nombre:</strong>
-        <span>@Model.Nombre</span>
-    </div>
-    <div class="fila">
-        <strong>Tipo de venta:</strong>
-        <span>@Model.Tipo_venta</span>
-    </div>
-    <div class="fila">
-        <strong>Precio unitario:</strong>
-        <span>Bs. @Model.Precio_unitario.ToString("F2")</span>
-    </div>
-    <div class="fila">
-        <strong>Stock actual:</strong>
-        <span>@Model.Stock_actual</span>
-    </div>
-    <div class="fila">
-        <strong>Stock mínimo:</strong>
-        <span>@Model.Stock_minimo</span>
-    </div>
-    <div class="fila">
-        <strong>Proveedor:</strong>
-        <span>@(Model.NombreProveedor ?? "Sin proveedor asignado")</span>
-    </div>
+        @if (stockBajo)
+        {
+            <div class="alert-stock">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div>
+                    <strong>Stock crítico</strong>
+                    <p>El stock actual (@Model.Stock_actual) está por debajo o igual al mínimo (@Model.Stock_minimo).</p>
+                </div>
+            </div>
+        }
 
-    <div class="acciones">
-        <a asp-action="Edit" asp-route-id="@Model.Id_producto" class="btn btn-primary">✏️ Editar</a>
-        <a asp-action="Delete" asp-route-id="@Model.Id_producto" class="btn btn-danger">🗑️ Eliminar</a>
-        <a asp-action="Index" class="btn btn-secondary">← Volver al inventario</a>
+        <div class="detail-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="bi bi-tag"></i> Nombre
+                    </div>
+                    <div class="info-value">@Model.Nombre</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="bi bi-truck"></i> Proveedor
+                    </div>
+                    <div class="info-value">@(Model.NombreProveedor ?? "Sin asignar")</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="bi bi-tags"></i> Tipo de venta
+                    </div>
+                    <div class="info-value">
+                        <span class="badge-tipo @(Model.Tipo_venta == "Unidad" ? "unidad" : "peso")">
+                            @Model.Tipo_venta
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="bi bi-currency-dollar"></i> Precio unitario
+                    </div>
+                    <div class="info-value strong">Bs. @Model.Precio_unitario.ToString("F2")</div>
+                </div>
+            </div>
+
+            <div class="stock-section">
+                <h3><i class="bi bi-bar-chart me-2"></i>Estado del Stock</h3>
+                
+                <div class="stock-bars">
+                    <div class="stock-bar-item">
+                        <div class="stock-bar-label">
+                            <span>Stock Actual</span>
+                            <strong>@Model.Stock_actual</strong>
+                        </div>
+                        <div class="stock-bar">
+                            <div class="stock-bar-fill actual" style="width: @(porcentajeStock)%"></div>
+                        </div>
+                    </div>
+
+                    <div class="stock-bar-item">
+                        <div class="stock-bar-label">
+                            <span>Stock Mínimo</span>
+                            <strong>@Model.Stock_minimo</strong>
+                        </div>
+                        <div class="stock-bar">
+                            <div class="stock-bar-fill minimo" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-actions">
+            <a asp-action="Edit" asp-route-id="@Model.Id_producto" class="btn btn-primary">
+                <i class="bi bi-pencil me-1"></i> Editar
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id_producto" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i> Eliminar
+            </a>
+        </div>
     </div>
 </div>
+
+<style>
+    body { background: #F9FAFB; font-family: 'Poppins', sans-serif; }
+    .detail-page { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    .btn-back { display: inline-flex; align-items: center; gap: 6px; color: #6B7280; text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-bottom: 1rem; transition: color 0.2s; }
+    .btn-back:hover { color: #E60000; }
+    .detail-card { background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
+
+    .detail-hero {
+        background: linear-gradient(135deg, #E60000, #B80000);
+        color: white;
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .hero-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .hero-info { flex: 1; min-width: 200px; }
+    .hero-info h1 { font-size: 1.6rem; font-weight: 700; margin: 0 0 0.5rem 0; }
+
+    .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+    .meta-badge {
+        background: rgba(255,255,255,0.2);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .meta-badge.tipo { background: rgba(255,255,255,0.3); }
+
+    .hero-price { text-align: right; }
+    .price-label { display: block; font-size: 0.8rem; opacity: 0.8; }
+    .price-value { font-size: 1.8rem; font-weight: 700; }
+
+    .alert-stock {
+        background: #FEF2F2;
+        color: #991B1B;
+        padding: 1rem 1.5rem;
+        margin: 1.5rem 2rem 0;
+        border-radius: 12px;
+        border-left: 4px solid #E60000;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    .alert-stock i { font-size: 1.5rem; }
+    .alert-stock strong { display: block; margin-bottom: 4px; }
+    .alert-stock p { margin: 0; font-size: 0.9rem; }
+
+    .detail-body { padding: 2rem; }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-item {
+        background: #F9FAFB;
+        padding: 1.2rem;
+        border-radius: 12px;
+        border-left: 3px solid #E60000;
+    }
+
+    .info-label {
+        color: #6B7280;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .info-value { color: #111827; font-weight: 500; font-size: 0.95rem; }
+    .info-value.strong { color: #E60000; font-weight: 700; font-size: 1.1rem; }
+
+    .badge-tipo {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .badge-tipo.unidad { background: #DBEAFE; color: #1E40AF; }
+    .badge-tipo.peso { background: #FEF3C7; color: #92400E; }
+
+    .stock-section h3 {
+        color: #111827;
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 1rem 0;
+    }
+
+    .stock-bars { display: flex; flex-direction: column; gap: 1rem; }
+
+    .stock-bar-item { }
+
+    .stock-bar-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: #374151;
+        margin-bottom: 6px;
+    }
+
+    .stock-bar-label strong { color: #111827; }
+
+    .stock-bar {
+        height: 10px;
+        background: #F3F4F6;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .stock-bar-fill {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.6s ease;
+    }
+
+    .stock-bar-fill.actual { background: linear-gradient(90deg, #E60000, #B80000); }
+    .stock-bar-fill.minimo { background: #F59E0B; }
+
+    .detail-actions {
+        padding: 1.5rem 2rem;
+        background: #F9FAFB;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .btn {
+        padding: 0.8rem 1.8rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.2s;
+    }
+
+    .btn-primary { background: #E60000; color: white; }
+    .btn-primary:hover { background: #B80000; color: white; transform: translateY(-1px); }
+
+    .btn-danger { background: white; color: #E60000; border: 2px solid #E60000; }
+    .btn-danger:hover { background: #E60000; color: white; }
+</style>

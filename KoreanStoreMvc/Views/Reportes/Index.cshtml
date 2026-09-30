@@ -1,0 +1,346 @@
+@model KoreanStoreMvc.Controllers.ReporteVentasModel
+
+@{
+    ViewData["Title"] = "Reporte de Ventas";
+}
+
+<div class="reporte-page">
+
+    <!-- HEADER -->
+    <div class="reporte-header">
+        <div>
+            <h1><i class="bi bi-bar-chart-line me-2"></i>Reporte de Ventas</h1>
+            <p class="text-muted">
+                Cierre de caja del día:
+                <strong>@Model.Fecha</strong>
+            </p>
+        </div>
+        <button class="btn-imprimir" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> Imprimir Reporte
+        </button>
+    </div>
+
+    <!-- KPIs PRINCIPALES -->
+    <div class="kpis-grid">
+        <div class="kpi-card total">
+            <div class="kpi-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div class="kpi-body">
+                <span class="kpi-label">Total de ventas</span>
+                <span class="kpi-value">@Model.TotalVentas.ToString("0.00") <small>Bs</small></span>
+            </div>
+        </div>
+
+        <div class="kpi-card efectivo">
+            <div class="kpi-icon">
+                <i class="bi bi-cash-coin"></i>
+            </div>
+            <div class="kpi-body">
+                <span class="kpi-label">Efectivo</span>
+                <span class="kpi-value">@Model.Efectivo.ToString("0.00") <small>Bs</small></span>
+            </div>
+        </div>
+
+        <div class="kpi-card qr">
+            <div class="kpi-icon">
+                <i class="bi bi-qr-code"></i>
+            </div>
+            <div class="kpi-body">
+                <span class="kpi-label">QR</span>
+                <span class="kpi-value">@Model.Qr.ToString("0.00") <small>Bs</small></span>
+            </div>
+        </div>
+
+        <div class="kpi-card tarjeta">
+            <div class="kpi-icon">
+                <i class="bi bi-credit-card"></i>
+            </div>
+            <div class="kpi-body">
+                <span class="kpi-label">Tarjeta</span>
+                <span class="kpi-value">@Model.Tarjeta.ToString("0.00") <small>Bs</small></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRÁFICO -->
+    <div class="grafico-card">
+        <div class="grafico-header">
+            <h2><i class="bi bi-pie-chart me-2"></i>Ventas por método de pago</h2>
+            <span class="grafico-sub">Distribución del día</span>
+        </div>
+        <div class="grafico-container">
+            <canvas id="graficoVentas"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const efectivo = @Model.Efectivo;
+    const qr = @Model.Qr;
+    const tarjeta = @Model.Tarjeta;
+
+    const ctx = document.getElementById('graficoVentas');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Efectivo', 'QR', 'Tarjeta'],
+            datasets: [{
+                label: 'Ventas (Bs)',
+                data: [efectivo, qr, tarjeta],
+                backgroundColor: [
+                    '#E60000',
+                    '#F59E0B',
+                    '#3B82F6'
+                ],
+                borderColor: [
+                    '#B80000',
+                    '#D97706',
+                    '#1E40AF'
+                ],
+                borderWidth: 2,
+                borderRadius: 10,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#111827',
+                    titleColor: '#FFFFFF',
+                    bodyColor: '#FFFFFF',
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: function(context) {
+                            return 'Bs. ' + context.parsed.y.toFixed(2);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#F3F4F6'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' Bs';
+                        },
+                        color: '#6B7280',
+                        font: { family: 'Poppins' }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#374151',
+                        font: {
+                            family: 'Poppins',
+                            weight: '600'
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<style>
+    body {
+        background: #F9FAFB;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .reporte-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px 20px 50px;
+    }
+
+    /* HEADER */
+    .reporte-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .reporte-header h1 {
+        color: #E60000;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+
+    .reporte-header p {
+        color: #6B7280;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .reporte-header p strong { color: #111827; }
+
+    .btn-imprimir {
+        background: white;
+        color: #E60000;
+        border: 2px solid #E60000;
+        padding: 0.7rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-imprimir:hover {
+        background: #E60000;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3);
+    }
+
+    /* KPIs */
+    .kpis-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-left: 5px solid;
+    }
+
+    .kpi-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+    }
+
+    .kpi-card.total { border-left-color: #E60000; }
+    .kpi-card.efectivo { border-left-color: #10B981; }
+    .kpi-card.qr { border-left-color: #F59E0B; }
+    .kpi-card.tarjeta { border-left-color: #3B82F6; }
+
+    .kpi-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .kpi-card.total .kpi-icon { background: linear-gradient(135deg, #E60000, #B80000); }
+    .kpi-card.efectivo .kpi-icon { background: linear-gradient(135deg, #10B981, #059669); }
+    .kpi-card.qr .kpi-icon { background: linear-gradient(135deg, #F59E0B, #D97706); }
+    .kpi-card.tarjeta .kpi-icon { background: linear-gradient(135deg, #3B82F6, #1E40AF); }
+
+    .kpi-body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .kpi-label {
+        font-size: 0.8rem;
+        color: #6B7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .kpi-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #111827;
+        line-height: 1.1;
+    }
+
+    .kpi-value small {
+        font-size: 0.9rem;
+        color: #9CA3AF;
+        font-weight: 500;
+    }
+
+    /* GRAFICO */
+    .grafico-card {
+        background: white;
+        border-radius: 18px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .grafico-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #F3F4F6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .grafico-header h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #111827;
+        margin: 0;
+    }
+
+    .grafico-sub {
+        color: #9CA3AF;
+        font-size: 0.85rem;
+    }
+
+    .grafico-container {
+        position: relative;
+        height: 400px;
+        padding: 1.5rem;
+    }
+
+    /* ===== IMPRESIÓN ===== */
+    @@media print {
+        body { background: white; }
+        .btn-imprimir { display: none !important; }
+        .reporte-page { padding: 0; }
+        .kpi-card, .grafico-card {
+            box-shadow: none;
+            border: 1px solid #E5E7EB;
+        }
+        .reporte-header h1 { color: #000; }
+    }
+
+    @@media (max-width: 768px) {
+        .reporte-header h1 { font-size: 1.5rem; }
+        .kpi-value { font-size: 1.3rem; }
+        .grafico-container { height: 300px; }
+    }
+</style>

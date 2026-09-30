@@ -1,192 +1,313 @@
 @model KoreanStoreMvc.Models.VentaModel
+
 @{
-    Layout = null;
-    ViewData["Title"] = "Ticket Digital";
-    var metodoIcono = Model.Metodo_pago switch
-    {
-        "Efectivo" => "💵",
-        "QR" => "📱",
-        "Tarjeta" => "💳",
-        _ => "💰"
-    };
+    ViewData["Title"] = "Comprobante de Venta";
 }
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8" />
-    <title>Ticket #@Model.Id_venta - BekeenCo</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Courier New', monospace;
-            background: #F8FAFC;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .ticket {
-            background: #FFFFFF;
-            width: 380px;
-            border-top: 6px solid #E60000;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header .logo {
-            width: 60px; height: 60px; margin: 0 auto 8px;
-            background: #E60000; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px;
-        }
-        .header h1 {
-            color: #E60000; font-size: 22px;
-            letter-spacing: 2px; font-weight: 700;
-        }
-        .header .subtitulo {
-            font-size: 11px; color: #6B7280;
-            letter-spacing: 1px; margin-top: 4px;
-        }
-        .divider {
-            border-top: 1px dashed #D1D5DB;
-            margin: 12px 0;
-        }
-        .info {
-            font-size: 12px;
-            color: #4B5563;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-        }
-        .info strong { color: #111827; }
-        table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-        th {
-            text-align: left; font-size: 11px;
-            color: #6B7280; padding: 6px 0;
-            border-bottom: 1px solid #E5E7EB;
-            text-transform: uppercase;
-        }
-        th.right, td.right { text-align: right; }
-        td {
-            font-size: 12px;
-            padding: 6px 0;
-            color: #111827;
-        }
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 20px; font-weight: 700;
-            color: #E60000;
-            padding: 12px 0;
-            border-top: 2px solid #E60000;
+
+<style>
+    body { 
+        background: #F8FAFC; 
+        font-family: 'Poppins', 'Segoe UI', sans-serif;
+    }
+
+    .comprobante-wrapper {
+        max-width: 480px;
+        margin: 40px auto;
+        padding: 0 1rem;
+    }
+
+    .comprobante {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .comprobante-header {
+        background: linear-gradient(135deg, #E60000, #B80000);
+        color: white;
+        padding: 2rem 1.5rem;
+        text-align: center;
+    }
+
+    .comprobante-header img {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 3px solid white;
+        margin-bottom: 0.8rem;
+    }
+
+    .comprobante-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .comprobante-header p {
+        margin: 0.3rem 0 0 0;
+        opacity: 0.9;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .comprobante-body {
+        padding: 1.5rem;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px dashed #E5E7EB;
+        font-size: 0.9rem;
+    }
+
+    .info-row:last-of-type {
+        border-bottom: none;
+    }
+
+    .info-row .label {
+        color: #6B7280;
+        font-weight: 500;
+    }
+
+    .info-row .value {
+        color: #111827;
+        font-weight: 600;
+    }
+
+    .divider {
+        border: none;
+        border-top: 2px dashed #E5E7EB;
+        margin: 1rem 0;
+    }
+
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+
+    .items-table thead th {
+        text-align: left;
+        padding: 0.6rem 0;
+        color: #6B7280;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #F3F4F6;
+    }
+
+    .items-table thead th:last-child,
+    .items-table tbody td:last-child {
+        text-align: right;
+    }
+
+    .items-table tbody td {
+        padding: 0.6rem 0;
+        color: #111827;
+        border-bottom: 1px solid #F9FAFB;
+    }
+
+    .total-final {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.2rem;
+        background: #FEF2F2;
+        border-radius: 12px;
+        margin-top: 1rem;
+        border-left: 4px solid #E60000;
+    }
+
+    .total-final .label {
+        font-weight: 600;
+        color: #374151;
+        font-size: 1rem;
+    }
+
+    .total-final .value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #E60000;
+    }
+
+    .metodo-pago-badge {
+        display: inline-block;
+        background: #F3F4F6;
+        color: #374151;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-top: 0.8rem;
+    }
+
+    .comprobante-footer {
+        text-align: center;
+        padding: 1.2rem;
+        background: #F9FAFB;
+        color: #6B7280;
+        font-size: 0.8rem;
+        border-top: 1px solid #E5E7EB;
+    }
+
+    .comprobante-footer strong {
+        color: #E60000;
+    }
+
+    .acciones {
+        display: flex;
+        gap: 10px;
+        margin-top: 1.5rem;
+    }
+
+    .btn-accion {
+        flex: 1;
+        padding: 14px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .btn-imprimir {
+        background: #E60000;
+        color: white;
+    }
+
+    .btn-imprimir:hover {
+        background: #B80000;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(230, 0, 0, 0.3);
+    }
+
+    .btn-nueva {
+        background: white;
+        color: #374151;
+        border: 2px solid #E5E7EB;
+    }
+
+    .btn-nueva:hover {
+        background: #F9FAFB;
+        border-color: #9CA3AF;
+    }
+
+    /* ===== IMPRESIÓN ===== */
+    @@media print {
+        body { background: white; }
+        .comprobante-wrapper { margin: 0; max-width: 100%; padding: 0; }
+        .comprobante { box-shadow: none; border-radius: 0; }
+        .acciones { display: none !important; }
+        .comprobante-header {
+            background: white !important;
+            color: #E60000 !important;
             border-bottom: 2px solid #E60000;
-            margin: 12px 0;
         }
-        .metodo {
-            text-align: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: #111827;
-            background: #FEF2F2;
-            padding: 8px;
-            border-radius: 6px;
-            margin: 12px 0;
-        }
-        .pie {
-            text-align: center;
-            font-size: 11px;
-            color: #6B7280;
-            margin-top: 16px;
-            line-height: 1.6;
-        }
-        .pie strong { color: #E60000; }
-        .acciones {
-            display: flex; gap: 8px;
-            margin-top: 16px;
-            width: 380px;
-            position: fixed;
-            bottom: 20px;
-        }
-        .acciones button, .acciones a {
-            flex: 1;
-            padding: 12px;
-            border: none; border-radius: 8px;
-            font-size: 14px; font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            font-family: inherit;
-        }
-        .btn-print { background: #E60000; color: white; }
-        .btn-nueva { background: #6B7280; color: white; }
-    </style>
-</head>
-<body>
-    <div>
-        <div class="ticket">
-            <div class="header">
-                <div class="logo">🍜</div>
-                <h1>BEKEENCO</h1>
-                <div class="subtitulo">KOREAN CONVENIENCE STORE</div>
+        .comprobante-header img { border-color: #E60000; }
+        .comprobante-header p { color: #6B7280 !important; }
+        .total-final { background: white; border: 2px solid #E60000; }
+    }
+</style>
+
+<div class="comprobante-wrapper">
+    <div class="comprobante">
+        <!-- HEADER -->
+        <div class="comprobante-header">
+            <img src="~/images/logo-bekeenco.png" alt="BekeenCo" />
+            <h1>BEKEENCO</h1>
+            <p>Convenience Store</p>
+        </div>
+
+        <!-- BODY -->
+        <div class="comprobante-body">
+            <div class="info-row">
+                <span class="label">N° Comprobante</span>
+                <span class="value">#@Model.Id_venta.ToString("D6")</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Fecha</span>
+                <span class="value">@Model.Fecha_venta.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Cajero ID</span>
+                <span class="value">@Model.Id_user</span>
             </div>
 
-            <div class="divider"></div>
+            <hr class="divider" />
 
-            <div class="info">
-                <span>Ticket:</span>
-                <strong>#@Model.Id_venta.ToString("D6")</strong>
-            </div>
-            <div class="info">
-                <span>Fecha:</span>
-                <strong>@Model.Fecha_venta.ToString("dd/MM/yyyy HH:mm")</strong>
-            </div>
-            <div class="info">
-                <span>Cajero ID:</span>
-                <strong>@Model.Id_user</strong>
-            </div>
-
-            <div class="divider"></div>
-
-            <table>
+            <!-- TABLA DE ITEMS -->
+            <table class="items-table">
                 <thead>
                     <tr>
                         <th>Descripción</th>
-                        <th class="right">Cant.</th>
-                        <th class="right">Subtotal</th>
+                        <th>Cant.</th>
+                        <th>Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var d in Model.Detalles)
+                    @if (Model.Detalles != null && Model.Detalles.Any())
+                    {
+                        foreach (var detalle in Model.Detalles)
+                        {
+                            <tr>
+                                <td>@(detalle.NombreProducto ?? $"Producto #{detalle.Id_producto}")</td>
+                                <td>@detalle.Cantidad_o_gramos.ToString("0.##")</td>
+                                <td>Bs. @detalle.Subtotal.ToString("0.00")</td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td>@(d.NombreProducto ?? $"Prod #{d.Id_producto}")</td>
-                            <td class="right">@d.Cantidad_o_gramos.ToString("0.##")</td>
-                            <td class="right">Bs. @d.Subtotal.ToString("F2")</td>
+                            <td colspan="3" style="text-align:center; color:#9CA3AF; padding:1rem;">
+                                Sin detalles disponibles
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
 
-            <div class="total-row">
-                <span>TOTAL</span>
-                <span>Bs. @Model.Total.ToString("F2")</span>
+            <!-- TOTAL -->
+            <div class="total-final">
+                <span class="label">TOTAL</span>
+                <span class="value">Bs. @Model.Total.ToString("0.00")</span>
             </div>
 
-            <div class="metodo">
-                @metodoIcono Pago: @Model.Metodo_pago
-            </div>
-
-            <div class="pie">
-                ¡Gracias por su compra!<br />
-                <strong>BekeenCo</strong> · Cochabamba, Bolivia<br />
-                Conserve su ticket para cualquier reclamo.
+            <div style="text-align:center;">
+                <span class="metodo-pago-badge">
+                    <i class="bi bi-credit-card me-1"></i>
+                    Pago: @Model.Metodo_pago
+                </span>
             </div>
         </div>
 
-        <div class="acciones">
-            <button class="btn-print" onclick="window.print()">🖨️ Imprimir</button>
-            <a class="btn-nueva" href="/Caja/Index">🧾 Nueva venta</a>
+        <!-- FOOTER -->
+        <div class="comprobante-footer">
+            <p style="margin:0 0 4px 0;">¡Gracias por su compra!</p>
+            <p style="margin:0;"><strong>BekeenCo</strong> · Cochabamba, Bolivia</p>
+            <p style="margin:4px 0 0 0; font-size:0.75rem;">Conserve su comprobante para cualquier reclamo.</p>
         </div>
     </div>
-</body>
-</html>
+
+    <!-- ACCIONES -->
+    <div class="acciones">
+        <button class="btn-accion btn-imprimir" onclick="window.print()">
+            <i class="bi bi-printer-fill"></i> Imprimir Comprobante
+        </button>
+        <a href="/Caja/Index" class="btn-accion btn-nueva">
+            <i class="bi bi-plus-circle"></i> Nueva Venta
+        </a>
+    </div>
+</div>

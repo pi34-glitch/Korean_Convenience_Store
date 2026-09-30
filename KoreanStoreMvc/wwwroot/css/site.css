@@ -1,22 +1,125 @@
+:root {
+    --rojo-bekeenco: #E60000;
+    --rojo-hover: #CC0000;
+    --gris-texto: #4B5563;
+    --negro-texto: #111827;
+    --fondo-app: #F8FAFC;
+}
+
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    background-color: var(--fondo-app);
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    color: var(--negro-texto);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+/* ===== Estilos del Navbar ===== */
+.navbar-brand img {
+    border: 2px solid var(--rojo-bekeenco);
+}
+
+.nav-link-bekeen {
+    color: var(--gris-texto);
+    font-weight: 500;
+    padding: 8px 16px !important;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-link-bekeen:hover {
+    background-color: #FEF2F2;
+    color: var(--rojo-bekeenco);
+    transform: translateY(-1px);
+}
+
+/* ===== Estilos del Badge de Alerta (Sprint 3 - HU-09) ===== */
+.nav-alerta {
+    position: relative;
+}
+
+.badge-alerta-navbar {
+    display: inline-block;
+    background-color: var(--rojo-bekeenco);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 6px;
+    min-width: 20px;
+    text-align: center;
+    animation: pulso-alerta 1.5s infinite;
+}
+
+@keyframes pulso-alerta {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.85; }
+}
+
+/* ===== Botones Personalizados ===== */
+.btn-bekeen {
+    background-color: var(--rojo-bekeenco);
+    color: white;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 24px;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-bekeen:hover {
+    background-color: var(--rojo-hover);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3);
+}
+
+.btn-outline-bekeen {
+    border: 2px solid var(--rojo-bekeenco);
+    color: var(--rojo-bekeenco);
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 22px;
+    background: transparent;
+    transition: all 0.2s;
+}
+
+.btn-outline-bekeen:hover {
+    background-color: var(--rojo-bekeenco);
+    color: white;
+}
+
+/* ===== Tarjetas Premium ===== */
+.card-premium {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white;
+}
+
+.card-premium:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: var(--rojo-bekeenco);
 }
