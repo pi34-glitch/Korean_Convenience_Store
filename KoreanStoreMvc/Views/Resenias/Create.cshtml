@@ -1,0 +1,165 @@
+@model KoreanStoreMvc.Models.ReseñaModel
+@{
+    ViewData["Title"] = "Calificar Producto";
+    var producto = ViewBag.Producto as KoreanStoreMvc.Models.ProductoModel;
+}
+
+<style>
+    :root {
+        --rojo-bekeenco: #E60000;
+        --rojo-hover: #DC2626;
+        --blanco: #FFFFFF;
+        --gris-fondo: #F9FAFB;
+        --negro: #111827;
+        --gris-texto: #4B5563;
+        --gris-borde: #E5E7EB;
+        --amarillo-estrella: #F59E0B;
+    }
+    body { background: var(--gris-fondo); font-family: 'Segoe UI', sans-serif; }
+
+    .form-resena {
+        max-width: 600px;
+        margin: 2rem auto;
+        background: var(--blanco);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .form-resena h1 { color: var(--rojo-bekeenco); margin-bottom: 0.5rem; }
+    .subtitle { color: var(--gris-texto); margin-bottom: 1.5rem; }
+
+    .producto-info {
+        background: #FEF2F2;
+        border-left: 4px solid var(--rojo-bekeenco);
+        padding: 1rem 1.25rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    .producto-info h3 { color: var(--rojo-bekeenco); margin: 0 0 0.3rem 0; font-size: 1.1rem; }
+    .producto-info p { color: var(--gris-texto); margin: 0; font-size: 0.9rem; }
+
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; color: var(--gris-texto); font-weight: 600; margin-bottom: 0.5rem; }
+
+    /* Selector de estrellas */
+    .estrellas {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 0.3rem;
+    }
+    .estrellas input[type="radio"] { display: none; }
+    .estrellas label {
+        font-size: 2.5rem;
+        color: #D1D5DB;
+        cursor: pointer;
+        transition: color 0.15s, transform 0.15s;
+    }
+    .estrellas label:hover,
+    .estrellas label:hover ~ label,
+    .estrellas input[type="radio"]:checked ~ label {
+        color: var(--amarillo-estrella);
+    }
+    .estrellas label:hover { transform: scale(1.15); }
+
+    textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 0.75rem;
+        border: 1px solid var(--gris-borde);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        resize: vertical;
+        box-sizing: border-box;
+    }
+    textarea:focus {
+        outline: none;
+        border-color: var(--rojo-bekeenco);
+        box-shadow: 0 0 0 3px rgba(230,0,0,0.1);
+    }
+
+    .text-danger { color: #B91C1C; font-size: 0.85rem; margin-top: 0.3rem; display: block; }
+    .error-api {
+        background: #FEE2E2;
+        color: #991B1B;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #991B1B;
+    }
+
+    .btn-submit {
+        background: var(--rojo-bekeenco);
+        color: white;
+        border: none;
+        padding: 0.85rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        font-size: 1rem;
+        transition: background 0.2s;
+    }
+    .btn-submit:hover { background: var(--rojo-hover); }
+
+    .btn-cancelar {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: var(--gris-texto);
+        text-decoration: none;
+    }
+    .btn-cancelar:hover { color: var(--negro); }
+</style>
+
+<div class="form-resena">
+    <h1>⭐ Calificar Producto</h1>
+    <p class="subtitle">Comparte tu experiencia con otros comensales de BekeenCo.</p>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="error-api">⚠️ @ViewBag.Error</div>
+    }
+
+    @if (producto != null)
+    {
+        <div class="producto-info">
+            <h3>📦 @producto.Nombre</h3>
+            <p>Precio: Bs. @producto.Precio_unitario.ToString("F2") · Tipo: @producto.Tipo_venta</p>
+        </div>
+    }
+
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id_producto" />
+
+        <div class="form-group">
+            <label>¿Cómo calificas tu experiencia? *</label>
+            <div class="estrellas">
+                <input type="radio" asp-for="Calificacion" value="5" id="e5" />
+                <label for="e5" title="5 estrellas">★</label>
+                <input type="radio" asp-for="Calificacion" value="4" id="e4" />
+                <label for="e4" title="4 estrellas">★</label>
+                <input type="radio" asp-for="Calificacion" value="3" id="e3" />
+                <label for="e3" title="3 estrellas">★</label>
+                <input type="radio" asp-for="Calificacion" value="2" id="e2" />
+                <label for="e2" title="2 estrellas">★</label>
+                <input type="radio" asp-for="Calificacion" value="1" id="e1" />
+                <label for="e1" title="1 estrella">★</label>
+            </div>
+            <span asp-validation-for="Calificacion" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Comentario">Comentario</label>
+            <textarea asp-for="Comentario" placeholder="Cuéntanos qué te pareció el producto..."></textarea>
+            <span asp-validation-for="Comentario" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn-submit">🚀 Enviar Reseña</button>
+        <a asp-action="PorProducto" asp-route-id="@Model.Id_producto" class="btn-cancelar">
+            ← Volver a las reseñas
+        </a>
+    </form>
+</div>

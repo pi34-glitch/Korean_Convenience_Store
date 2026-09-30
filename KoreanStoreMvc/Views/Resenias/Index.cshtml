@@ -1,158 +1,172 @@
-@model List<KoreanStoreMvc.Models.ReseñaModel>
+@model List<KoreanStoreMvc.Models.ProductoModel>
+
 @{
     ViewData["Title"] = "Reseñas de Comensales";
-    var producto = ViewBag.Producto as KoreanStoreMvc.Models.ProductoModel;
-    var productoId = ViewBag.ProductoId as int?;
 }
 
-
-@if (TempData["Exito"] != null)
-{
-    <div class="alert-exito">✅ @TempData["Exito"]</div>
-}
-
-<div class="header-resenas">
-    <div>
-        <h1>💬 Reseñas de Comensales</h1>
-        @if (producto != null)
-        {
-            <p class="subtitle">Mostrando reseñas de: <strong>@producto.Nombre</strong></p>
-        }
-        else
-        {
-            <p class="subtitle">Las opiniones de nuestros clientes</p>
-        }
+<div class="container-resenias">
+    <div class="header-resenias text-center mb-4">
+        <h1 class="titulo-resenias">Reseñas de Comensales</h1>
+        <p class="subtitulo-resenias">Selecciona un producto para ver o escribir tu opinión.</p>
     </div>
 
-    @if (productoId.HasValue)
+    @if (TempData["Exito"] != null)
     {
-        <a asp-action="Crear" asp-route-productoId="@productoId" class="btn-nueva">+ Escribir reseña</a>
+        <div class="alert-exito">@TempData["Exito"]</div>
     }
-</div>
 
-<div class="resenas-lista">
-    @if (Model == null || !Model.Any())
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert-error">@ViewBag.Error</div>
+    }
+
+    @if (!Model.Any())
     {
         <div class="sin-resenas">
-            <h3>Aún no hay reseñas</h3>
-            <p>Sé el primero en compartir tu experiencia con este producto.</p>
+            <h3>No hay productos disponibles</h3>
+            <p>Vuelve más tarde cuando el catálogo esté cargado.</p>
         </div>
     }
     else
     {
-        @foreach (var r in Model)
-        {
-            <div class="card-resena">
-                <div class="card-header">
-                    <span class="usuario">👤 @(r.NombreUsuario ?? "Anónimo")</span>
-                    <span class="fecha">📅 @r.Fecha.ToLocalTime().ToString("dd/MM/yyyy")</span>
-                </div>
-
-                <div class="estrellas-vista">
-                    @for (int i = 1; i <= 5; i++)
-                    {
-                        if (i <= r.Calificacion)
-                        {
-                            <span>★</span>
-                        }
-                        else
-                        {
-                            <span class="vacia">★</span>
-                        }
-                    }
-                    <span style="color: #4B5563; font-size: 0.85rem; margin-left: 0.5rem;">
-                        (@r.Calificacion/5)
-                    </span>
-                </div>
-
-                <p class="comentario">"@r.Comentario"</p>
-            </div>
-        }
+        <div class="grid-productos">
+            @foreach (var producto in Model)
+            {
+                <a asp-action="PorProducto" asp-route-id="@producto.Id_producto" class="card-producto-resenia">
+                    <div class="card-body">
+                        <h3>@producto.Nombre</h3>
+                        <p class="precio">Bs. @producto.Precio_unitario.ToString("0.00")</p>
+                        <div class="estrellas-promedio">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span class="@(i <= 4 ? "activa" : "vacia")">★</span>
+                            }
+                            <span class="promedio-texto">Ver reseñas</span>
+                        </div>
+                        <button class="btn-ver-resenias">
+                            <i class="bi bi-chat-left-text me-1"></i> Ver Reseñas
+                        </button>
+                    </div>
+                </a>
+            }
+        </div>
     }
 </div>
+
 <style>
-    :root {
-        --rojo-bekeenco: #E60000;
-        --blanco: #FFFFFF;
-        --gris-fondo: #F9FAFB;
-        --gris-texto: #4B5563;
-        --amarillo-estrella: #F59E0B;
+    .container-resenias {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+        font-family: 'Poppins', sans-serif;
     }
-    body { background: var(--gris-fondo); font-family: 'Segoe UI', sans-serif; }
 
-    .header-resenas {
-        max-width: 800px;
-        margin: 2rem auto 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        gap: 1rem;
+    .titulo-resenias {
+        color: #E60000;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
     }
-    .header-resenas h1 { color: var(--rojo-bekeenco); margin: 0; font-size: 1.8rem; }
-    .header-resenas .subtitle { color: var(--gris-texto); margin: 0.3rem 0 0; }
 
-    .btn-nueva {
-        background: var(--rojo-bekeenco);
-        color: white;
-        padding: 0.7rem 1.5rem;
-        border-radius: 8px;
+    .subtitulo-resenias { color: #6B7280; font-size: 1rem; }
+
+    .alert-exito {
+        background: #D1FAE5;
+        color: #065F46;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid #065F46;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+    }
+
+    .alert-error {
+        background: #FEE2E2;
+        color: #B91C1C;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid #B91C1C;
+        margin-bottom: 1.5rem;
+    }
+
+    .grid-productos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .card-producto-resenia {
         text-decoration: none;
-        font-weight: 600;
-        white-space: nowrap;
+        color: inherit;
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: block;
     }
-    .btn-nueva:hover { background: #DC2626; color: white; }
 
-    .resenas-lista { max-width: 800px; margin: 0 auto 3rem; }
-
-    .card-resena {
-        background: var(--blanco);
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        border-left: 4px solid var(--rojo-bekeenco);
+    .card-producto-resenia:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(230, 0, 0, 0.15);
+        color: inherit;
     }
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.7rem;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-    .usuario { color: var(--gris-texto); font-weight: 600; font-size: 0.95rem; }
-    .fecha { color: #9CA3AF; font-size: 0.85rem; }
 
-    .estrellas-vista { color: var(--amarillo-estrella); font-size: 1.3rem; letter-spacing: 2px; }
-    .estrellas-vista .vacia { color: #D1D5DB; }
+    .card-body { padding: 20px; }
 
-    .comentario {
+    .card-body h3 {
         color: #111827;
-        font-size: 0.95rem;
-        line-height: 1.5;
-        margin: 0;
-        font-style: italic;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 0 8px 0;
     }
+
+    .precio {
+        color: #E60000;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .estrellas-promedio {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 16px;
+    }
+
+    .estrellas-promedio .activa { color: #F59E0B; font-size: 1.2rem; }
+    .estrellas-promedio .vacia { color: #D1D5DB; font-size: 1.2rem; }
+
+    .promedio-texto {
+        color: #9CA3AF;
+        font-size: 0.8rem;
+        margin-left: 8px;
+    }
+
+    .btn-ver-resenias {
+        width: 100%;
+        padding: 10px;
+        background: #E60000;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .btn-ver-resenias:hover { background: #B80000; }
 
     .sin-resenas {
         text-align: center;
         padding: 3rem;
-        color: var(--gris-texto);
-        background: var(--blanco);
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        color: #6B7280;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     }
-    .sin-resenas h3 { color: var(--rojo-bekeenco); }
 
-    .alert-exito {
-        max-width: 800px;
-        margin: 1rem auto;
-        background: #D1FAE5;
-        color: #065F46;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        border-left: 4px solid #065F46;
-        font-weight: 500;
-    }
+    .sin-resenas h3 { color: #E60000; }
 </style>

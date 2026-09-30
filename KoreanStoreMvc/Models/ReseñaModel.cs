@@ -9,5 +9,9 @@ namespace KoreanStoreMvc.Models
         public string? Comentario { get; set; }
         public DateTime Fecha { get; set; }
         public string? NombreUsuario { get; set; }
+
+        // Propiedades calculadas (no vienen de la API, se llenan en el cliente)
+        public double PromedioCalificacion { get; set; }
+        public int TotalResenas { get; set; }
     }
 }

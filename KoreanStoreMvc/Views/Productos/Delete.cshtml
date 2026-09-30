@@ -4,77 +4,175 @@
     ViewData["Title"] = "Eliminar Producto";
 }
 
+<div class="delete-page">
+    <div class="delete-card">
+        <div class="delete-icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+
+        <h1>¿Eliminar este producto?</h1>
+        <p class="delete-subtitle">
+            Esta acción eliminará permanentemente el producto del catálogo.
+            <strong>No se puede deshacer.</strong>
+        </p>
+
+        <div class="product-preview">
+            <div class="preview-header">
+                <i class="bi bi-box-seam"></i>
+                <span>Producto a eliminar</span>
+            </div>
+            <div class="preview-body">
+                <div class="preview-row">
+                    <span class="preview-label">ID</span>
+                    <span class="preview-value">#@Model.Id_producto</span>
+                </div>
+                <div class="preview-row">
+                    <span class="preview-label">Nombre</span>
+                    <span class="preview-value strong">@Model.Nombre</span>
+                </div>
+                <div class="preview-row">
+                    <span class="preview-label">Tipo</span>
+                    <span class="preview-value">@Model.Tipo_venta</span>
+                </div>
+                <div class="preview-row">
+                    <span class="preview-label">Precio</span>
+                    <span class="preview-value">Bs. @Model.Precio_unitario.ToString("F2")</span>
+                </div>
+                <div class="preview-row">
+                    <span class="preview-label">Stock Actual</span>
+                    <span class="preview-value">@Model.Stock_actual</span>
+                </div>
+                <div class="preview-row">
+                    <span class="preview-label">Proveedor</span>
+                    <span class="preview-value">@(Model.NombreProveedor ?? "Sin asignar")</span>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Delete" asp-route-id="@Model.Id_producto" method="post">
+            @Html.AntiForgeryToken()
+            <div class="delete-actions">
+                <button type="submit" class="btn-confirm">
+                    <i class="bi bi-trash me-1"></i> Sí, eliminar producto
+                </button>
+                <a asp-action="Index" class="btn-cancel">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <style>
-    body { background: #F9FAFB; font-family: 'Segoe UI', sans-serif; }
-    .eliminar {
-        max-width: 600px;
-        margin: 2rem auto;
-        background: #FFFFFF;
-        padding: 2rem;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .eliminar h1 { color: #E60000; margin-bottom: 1rem; }
+    body { background: #F9FAFB; font-family: 'Poppins', sans-serif; }
+    .delete-page { max-width: 550px; margin: 3rem auto; padding: 0 1rem; }
 
-    .advertencia {
-        background: #FEE2E2;
-        color: #991B1B;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-        border-left: 4px solid #991B1B;
-        font-weight: 500;
+    .delete-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
-    .fila {
-        padding: 0.7rem 0;
-        border-bottom: 1px solid #E5E7EB;
+    .delete-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #FEE2E2, #FECACA);
+        color: #E60000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 1.5rem;
+    }
+
+    .delete-card h1 {
+        color: #111827;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .delete-subtitle {
+        color: #6B7280;
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+    }
+
+    .product-preview {
+        background: #F9FAFB;
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        text-align: left;
+    }
+
+    .preview-header {
+        background: #E60000;
+        color: white;
+        padding: 0.8rem 1.2rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .preview-body { padding: 1rem 1.2rem; }
+
+    .preview-row {
         display: flex;
         justify-content: space-between;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid #E5E7EB;
+        font-size: 0.9rem;
     }
-    .fila:last-of-type { border-bottom: none; }
-    .fila strong { color: #4B5563; }
 
-    .acciones {
-        margin-top: 1.5rem;
+    .preview-row:last-child { border-bottom: none; }
+
+    .preview-label { color: #6B7280; font-weight: 500; }
+    .preview-value { color: #111827; font-weight: 600; }
+    .preview-value.strong { color: #E60000; }
+
+    .delete-actions {
         display: flex;
         gap: 1rem;
+        justify-content: center;
         flex-wrap: wrap;
     }
-    .btn {
-        padding: 0.8rem 1.5rem;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
+
+    .btn-confirm {
+        background: #E60000;
+        color: white;
         border: none;
-        cursor: pointer;
+        padding: 0.9rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
         font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
     }
-    .btn-danger { background: #E60000; color: white; }
-    .btn-danger:hover { background: #DC2626; }
-    .btn-secondary { background: #E5E7EB; color: #111827; }
-    .btn-secondary:hover { background: #D1D5DB; }
+
+    .btn-confirm:hover {
+        background: #B80000;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3);
+    }
+
+    .btn-cancel {
+        background: white;
+        color: #6B7280;
+        border: 2px solid #E5E7EB;
+        padding: 0.9rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel:hover { border-color: #E60000; color: #E60000; }
 </style>
-
-<div class="eliminar">
-    <h1>🗑️ Eliminar Producto</h1>
-
-    <div class="advertencia">
-        <strong>⚠️ Advertencia:</strong> Esta acción eliminará permanentemente el producto del catálogo. Esta operación no se puede deshacer.
-    </div>
-
-    <div class="fila"><strong>ID:</strong> <span>@Model.Id_producto</span></div>
-    <div class="fila"><strong>Nombre:</strong> <span>@Model.Nombre</span></div>
-    <div class="fila"><strong>Tipo:</strong> <span>@Model.Tipo_venta</span></div>
-    <div class="fila"><strong>Precio:</strong> <span>Bs. @Model.Precio_unitario.ToString("F2")</span></div>
-    <div class="fila"><strong>Stock actual:</strong> <span>@Model.Stock_actual</span></div>
-    <div class="fila"><strong>Proveedor:</strong> <span>@(Model.NombreProveedor ?? "Sin proveedor")</span></div>
-
-    <form asp-action="Delete" asp-route-id="@Model.Id_producto" method="post">
-        @Html.AntiForgeryToken()
-        <div class="acciones">
-            <button type="submit" class="btn btn-danger">🗑️ Sí, eliminar producto</button>
-            <a asp-action="Index" class="btn btn-secondary">← Cancelar</a>
-        </div>
-    </form>
-</div>

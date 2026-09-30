@@ -8,168 +8,139 @@
 }
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>@ViewData["Title"] - BekeenCo</title>
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-        <style>
-            :root {
-                --rojo-bekeenco: #E60000;
-                --rojo-hover: #DC2626;
-                --gris-texto: #4B5563;
-                --negro-texto: #111827;
-            }
-            body { background-color: #F8FAFC; font-family: 'Segoe UI', sans-serif; }
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BekeenCo</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom border-3 border-danger sticky-top shadow-sm">
+            <div class="container-fluid px-4">
+                <!-- Logo y Marca -->
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo-bekeenco.png" alt="BekeenCo" height="45" class="d-inline-block align-text-top rounded-circle">
+                    <span class="fw-bold fs-4 text-danger" style="font-family: 'Poppins', sans-serif;">BekeenCo</span>
+                </a>
 
-            .navbar-bekeen {
-                background-color: #FFFFFF;
-                border-bottom: 3px solid var(--rojo-bekeenco);
-                padding: 12px 24px;
-            }
-            .navbar-brand-bekeen {
-                color: var(--rojo-bekeenco) !important;
-                font-weight: 700;
-                font-size: 1.4rem;
-                letter-spacing: 1px;
-                text-decoration: none;
-            }
-            .nav-link-bekeen {
-                color: var(--gris-texto);
-                font-weight: 500;
-                padding: 8px 14px;
-                border-radius: 6px;
-                text-decoration: none;
-                transition: all 0.2s;
-            }
-            .nav-link-bekeen:hover {
-                background-color: #FEF2F2;
-                color: var(--rojo-bekeenco);
-            }
-            .user-info {
-                color: var(--gris-texto);
-                font-size: 0.9rem;
-                margin-right: 12px;
-            }
-            .user-info .rol {
-                color: var(--rojo-bekeenco);
-                font-weight: 600;
-            }
-            .btn-logout {
-                background-color: var(--rojo-bekeenco);
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 8px 16px;
-                font-weight: 600;
-                font-size: 0.9rem;
-                cursor: pointer;
-                transition: background-color 0.2s;
-            }
-            .btn-logout:hover { background-color: var(--rojo-hover); }
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarBekeen" aria-controls="navbarBekeen" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            /* ===== Sprint 3 - HU-09: Estilos del badge de alertas ===== */
-            .nav-alerta {
-                position: relative;
-                display: inline-flex;
-                align-items: center;
-            }
-
-            .badge-alerta-navbar {
-                display: inline-block;
-                background-color: #E60000;
-                color: white;
-                font-size: 0.7rem;
-                font-weight: 700;
-                padding: 2px 7px;
-                border-radius: 10px;
-                margin-left: 6px;
-                min-width: 20px;
-                text-align: center;
-                animation: pulso-alerta 1.5s infinite;
-            }
-
-            @@keyframes pulso-alerta {
-                0%, 100% { transform: scale(1); opacity: 1; }
-                50% { transform: scale(1.15); opacity: 0.85; }
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <nav class="navbar-bekeen d-flex justify-content-between align-items-center flex-wrap">
-                <div class="d-flex align-items-center gap-3 flex-wrap">
-                    <a class="navbar-brand-bekeen" asp-controller="Home" asp-action="Index">
-                        🍜 BekeenCo
-                    </a>
-
-                    @if (estaLogueado)
-                    {
-                        <div class="d-flex gap-2 flex-wrap">
+                <div class="collapse navbar-collapse" id="navbarBekeen">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-2">
+                        @if (estaLogueado)
+                        {
                             @* ==== MENÚ CLIENTE ==== *@
                             @if (userRole == "Cliente")
                             {
-                                <a class="nav-link-bekeen" asp-controller="Home" asp-action="Index">🏠 Inicio</a>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-bekeen" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door me-1"></i> Inicio</a>
+                                </li>
                                 @* Descomentar cuando Jorge termine el módulo de Catálogo *@
-                                @* <a class="nav-link-bekeen" href="/Catalogo/Index">🛒 Catálogo</a> *@
-                                @* <a class="nav-link-bekeen" href="/Carrito/Index">🧺 Mi Carrito</a> *@
-                                @* <a class="nav-link-bekeen" href="/Reseñas/Index">⭐ Mis Reseñas</a> *@
+                                <li class="nav-item"><a class="nav-link nav-link-bekeen" href="/Catalogo/Index"><i class="bi bi-grid me-1"></i> Catálogo</a></li> 
+                                @*<li class="nav-item"><a class="nav-link nav-link-bekeen" href="/Carrito/Index"><i class="bi bi-cart me-1"></i> Mi Carrito</a></li>*@ 
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-bekeen" href="/Resenias/Index">
+                                        <i class="bi bi-star me-1"></i> Reseñas
+                                    </a>
+                                </li>
                             }
 
                             @* ==== MENÚ CAJERO VENDEDOR ==== *@
                             @if (userRole == "CajeroVendedor")
                             {
-                                <a class="nav-link-bekeen" asp-controller="Home" asp-action="Index">🏠 Inicio</a>
-                                <a class="nav-link-bekeen" href="/Caja/Index">💰 Caja</a>
-                                @* Descomentar cuando Augusto termine Ventas *@
-                                @* <a class="nav-link-bekeen" href="/Ventas/Index">📊 Ventas del Día</a> *@
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-bekeen" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door me-1"></i> Inicio</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-bekeen" href="/Caja/Index"><i class="bi bi-cash-register me-1"></i> Caja</a>
+                                </li>
+                                @* NO se muestra Ventas ni Reportes al Cajero *@
                             }
 
                             @* ==== MENÚ ADMINISTRADOR ==== *@
                             @if (userRole == "Administrador")
                             {
-                                <a class="nav-link-bekeen" asp-controller="Home" asp-action="Index">🏠 Inicio</a>
-                                <a class="nav-link-bekeen" href="/Caja/Index">💰 Caja</a>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-bekeen" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door me-1"></i> Inicio</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-bekeen" href="/Caja/Index"><i class="bi bi-cash-register me-1"></i> Caja</a>
+                                </li>
 
                                 @* Sprint 3 - HU-09: Alertas con badge dinámico *@
-                                <a class="nav-link-bekeen nav-alerta" href="/Alertas/Index">
-                                    🚨 Alertas
-                                    @await Component.InvokeAsync("AlertasBadge")
-                                </a>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-bekeen nav-alerta" href="/Alertas/Index">
+                                        <i class="bi bi-exclamation-triangle me-1"></i> Alertas
+                                        @await Component.InvokeAsync("AlertasBadge")
+                                    </a>
+                                </li>
 
                                 @* Descomentar cuando los compañeros terminen sus módulos *@
-                                @* <a class="nav-link-bekeen" href="/Ventas/Index">📊 Ventas</a> *@
-                                @* <a class="nav-link-bekeen" href="/Productos/Index">📦 Productos</a> *@
-                                @* <a class="nav-link-bekeen" href="/Proveedores/Index">🚚 Proveedores</a> *@
-                                @* <a class="nav-link-bekeen" href="/Usuarios/Index">👥 Usuarios</a> *@
+                                <li class="nav-item"><a class="nav-link nav-link-bekeen" href="/Reportes/Index"><i class="bi bi-bar-chart me-1"></i> Reportes </a></li>
+                                <li class="nav-item"><a class="nav-link nav-link-bekeen" href="/Productos/Index"><i class="bi bi-box-seam me-1"></i> Productos</a></li> 
+                                @*<li class="nav-item"><a class="nav-link nav-link-bekeen" href="/Proveedores/Index"><i class="bi bi-truck me-1"></i> Proveedores</a></li>*@     
+                                @*<li class="nav-item"><a class="nav-link nav-link-bekeen" href="/Usuarios/Index"><i class="bi bi-people me-1"></i> Usuarios</a></li>*@ 
                             }
+                        }
+                    </ul>
+
+                    @if (estaLogueado)
+                    {
+                        <div class="dropdown">
+                            <button class="btn btn-outline-danger dropdown-toggle d-flex align-items-center gap-2" type="button" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle fs-5"></i>
+                                <span class="d-none d-lg-inline">@userName</span>
+                                <span class="badge bg-danger rounded-pill">@userRole</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownUser">
+                                <li><h6 class="dropdown-header">Sesión iniciada como <strong>@userName</strong></h6></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" asp-controller="Account" asp-action="Logout" class="px-3 py-1">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger w-100 btn-sm">
+                                            <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
                         </div>
                     }
+                    else
+                    {
+                        <a href="/Account/Login" class="btn btn-danger fw-bold"><i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión</a>
+                    }
                 </div>
+            </div>
+        </nav>
+    </header>
 
-                @if (estaLogueado)
-                {
-                    <div class="d-flex align-items-center">
-                        <span class="user-info">
-                            👤 @userName
-                            <span class="rol">(@userRole)</span>
-                        </span>
-                        <form method="post" asp-controller="Account" asp-action="Logout" style="margin:0;">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn-logout">Cerrar sesión</button>
-                        </form>
-                    </div>
-                }
-            </nav>
-        </header>
+    <main role="main">
+        @RenderBody()
+    </main>
 
-        <main role="main" class="p-3">
-            @RenderBody()
-        </main>
+    <footer class="footer mt-auto py-3 bg-white border-top">
+        <div class="container text-center text-muted small">
+            &copy; 2026 - BekeenCo Convenience Store - Cochabamba, Bolivia
+        </div>
+    </footer>
 
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        @await RenderSectionAsync("Scripts", required: false)
-    </body>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
 </html>

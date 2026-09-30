@@ -1,8 +1,111 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
+    var userRole = Context.Session.GetString("UserRole");
+    var userName = Context.Session.GetString("UserName");
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section -->
+<div class="hero-section text-white text-center py-5 mb-5" style="background: linear-gradient(135deg, #E60000 0%, #990000 100%); border-radius: 0 0 30px 30px;">
+    <div class="container py-4">
+        <img src="~/images/logo-bekeenco.png" alt="BekeenCo Logo" class="mb-3 rounded-circle shadow-lg" style="width: 120px; height: 120px; border: 4px solid white;">
+        <h1 class="display-4 fw-bold mb-2">BekeenCo</h1>
+        <p class="lead mb-4">Convenience Store · Cochabamba, Bolivia</p>
+        
+        @if (userRole == null)
+        {
+            <p class="fs-5 mb-4">Bienvenido a tu tienda de conveniencia estilo coreano. Descubre nuestro catálogo, simula tu consumo y agiliza tu pago.</p>
+            <a href="/Account/Login" class="btn btn-light btn-lg fw-bold text-danger px-5 py-3 rounded-pill shadow">
+                <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
+            </a>
+        }
+        else
+        {
+            <p class="fs-5 mb-4">¡Hola, <strong>@userName</strong>! ¿Qué deseas hacer hoy?</p>
+        }
+    </div>
+</div>
+
+<!-- Tarjetas de Acceso Rápido por Rol -->
+<div class="container pb-5">
+    @if (userRole == "Cliente")
+    {
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card card-premium h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="bi bi-grid card-icon mb-3"></i>
+                        <h5 class="card-title fw-bold">Catálogo Digital</h5>
+                        <p class="card-text text-muted">Explora nuestros productos, precios por gramo y simula tu consumo.</p>
+                        <a href="/Catalogo/Index" class="btn btn-bekeen w-100">Ver Catálogo</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-premium h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="bi bi-star card-icon mb-3"></i>
+                        <h5 class="card-title fw-bold">Mis Reseñas</h5>
+                        <p class="card-text text-muted">Califica tu experiencia y déjanos tus comentarios.</p>
+                        <a href="/Resenias/Index" class="btn btn-bekeen w-100">Ver Reseñas</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (userRole == "CajeroVendedor")
+    {
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-6">
+                <div class="card card-premium h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="bi bi-cash-register card-icon mb-3"></i>
+                        <h5 class="card-title fw-bold">Módulo de Caja</h5>
+                        <p class="card-text text-muted">Realiza cobros por ticket, calculadora por gramos y gestiona ventas.</p>
+                        <a href="/Caja/Index" class="btn btn-bekeen w-100">Ir a Caja</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (userRole == "Administrador")
+    {
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card card-premium h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="bi bi-cash-register card-icon mb-3"></i>
+                        <h5 class="card-title fw-bold">Caja</h5>
+                        <p class="card-text text-muted">Accede al módulo de cobro y gestión de tickets.</p>
+                        <a href="/Caja/Index" class="btn btn-bekeen w-100">Ir a Caja</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-premium h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="bi bi-exclamation-triangle card-icon mb-3 text-warning"></i>
+                        <h5 class="card-title fw-bold">Alertas de Stock</h5>
+                        <p class="card-text text-muted">Revisa los insumos que están por debajo del stock mínimo.</p>
+                        <a href="/Alertas/Index" class="btn btn-bekeen w-100">Ver Alertas</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-premium h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="bi bi-box-seam card-icon mb-3"></i>
+                        <h5 class="card-title fw-bold">Gestión de Productos</h5>
+                        <p class="card-text text-muted">Administra el catálogo, precios y proveedores.</p>
+                        <a href="/Productos/Index" class="btn btn-bekeen w-100">Gestionar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i> No se reconoce tu rol. Contacta al administrador.
+        </div>
+    }
 </div>

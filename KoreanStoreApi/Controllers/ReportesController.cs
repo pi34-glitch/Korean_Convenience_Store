@@ -21,14 +21,11 @@ namespace KoreanStoreApi.Controllers
         public async Task<IActionResult> VentasDiarias()
         {
             var hoy = DateTime.UtcNow.Date;
-            var mañana = hoy.AddDays(1);
+            var manana = hoy.AddDays(1);
 
             var ventas = await _context.Ventas
                 .Where(v => v.Fecha_venta >= hoy &&
-                            v.Fecha_venta < mañana &&
-                            (v.Metodo_pago == MetodoPago.Efectivo ||
-                            v.Metodo_pago == MetodoPago.QR ||
-                            v.Metodo_pago == MetodoPago.Tarjeta))
+                            v.Fecha_venta < manana)
                 .ToListAsync();
 
             var totalVentas = ventas.Sum(v => v.Total);
@@ -40,7 +37,7 @@ namespace KoreanStoreApi.Controllers
             var qr = ventas
                 .Where(v => v.Metodo_pago == MetodoPago.QR)
                 .Sum(v => v.Total);
-            
+
             var tarjeta = ventas
                 .Where(v => v.Metodo_pago == MetodoPago.Tarjeta)
                 .Sum(v => v.Total);

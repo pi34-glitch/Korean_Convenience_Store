@@ -7,98 +7,221 @@
 <style>
     :root {
         --rojo-bekeenco: #E60000;
-        --rojo-hover: #DC2626;
+        --rojo-hover: #B80000;
         --blanco-puro: #FFFFFF;
         --gris-fondo: #F9FAFB;
         --negro-texto: #111827;
         --gris-texto: #4B5563;
     }
 
-    body { background-color: var(--gris-fondo); font-family: 'Segoe UI', sans-serif; }
+    .caja-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 24px;
+        max-width: 1500px;
+        margin: 24px auto;
+        padding: 0 20px;
+        align-items: start;
+    }
+
+    .caja-main {
+        min-width: 0;
+    }
 
     .header-caja {
         background-color: var(--blanco-puro);
-        padding: 1rem 2rem;
+        padding: 1rem 1.5rem;
         border-bottom: 3px solid var(--rojo-bekeenco);
         display: flex;
         justify-content: space-between;
         align-items: center;
+        border-radius: 14px 14px 0 0;
+        flex-wrap: wrap;
+        gap: 12px;
     }
 
-    .header-caja h1 { color: var(--rojo-bekeenco); font-size: 1.8rem; font-weight: 700; margin: 0; }
+    .header-caja h1 {
+        color: var(--rojo-bekeenco);
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-calculadora {
+        background-color: white;
+        color: var(--rojo-bekeenco);
+        border: 2px solid var(--rojo-bekeenco);
+        border-radius: 10px;
+        padding: 8px 16px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+    }
+
+    .btn-calculadora:hover {
+        background-color: var(--rojo-bekeenco);
+        color: white;
+    }
 
     .grilla-productos {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 1rem;
-        padding: 1rem;
+        padding: 1rem 0;
     }
 
     .tarjeta-producto {
         background-color: var(--blanco-puro);
         border: 1px solid #E5E7EB;
-        border-radius: 12px;
+        border-radius: 14px;
         padding: 1rem;
         transition: box-shadow 0.2s ease, transform 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .tarjeta-producto:hover {
-        box-shadow: 0 4px 12px rgba(230, 0, 0, 0.15);
+        box-shadow: 0 4px 16px rgba(230, 0, 0, 0.12);
         transform: translateY(-2px);
     }
 
-    .tarjeta-producto .nombre { font-size: 1rem; font-weight: 600; color: var(--negro-texto); margin-bottom: 0.3rem; }
-    .tarjeta-producto .precio { font-size: 1.4rem; font-weight: 700; color: var(--rojo-bekeenco); margin-bottom: 0.3rem; }
-    .tarjeta-producto .stock { font-size: 0.8rem; color: var(--gris-texto); margin-bottom: 0.8rem; }
+    .tarjeta-producto .nombre {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--negro-texto);
+        margin-bottom: 0.3rem;
+        line-height: 1.3;
+    }
 
-    .controles { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .tarjeta-producto .precio {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--rojo-bekeenco);
+        margin-bottom: 0.2rem;
+    }
+
+    .tarjeta-producto .stock {
+        font-size: 0.78rem;
+        color: var(--gris-texto);
+        margin-bottom: 0.8rem;
+    }
+
+    .controles {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
 
     .btn-control {
         background-color: var(--rojo-bekeenco);
-        color: var(--blanco-puro);
+        color: white;
         border: none;
         border-radius: 8px;
-        width: 40px; height: 40px;
-        font-size: 1.3rem; font-weight: 700;
+        width: 38px;
+        height: 38px;
+        font-size: 1.2rem;
+        font-weight: 700;
         cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .btn-control:hover { background-color: var(--rojo-hover); }
+    .btn-control:hover:not(:disabled) { background-color: var(--rojo-hover); }
     .btn-control:disabled { background-color: #D1D5DB; cursor: not-allowed; }
 
-    .contador { font-size: 1.2rem; font-weight: 700; color: var(--negro-texto); min-width: 30px; text-align: center; }
-
-    .panel-ticket {
-        position: fixed; right: 0; top: 0;
-        width: 340px; height: 100vh;
-        background-color: var(--blanco-puro);
-        border-left: 3px solid var(--rojo-bekeenco);
-        padding: 1.5rem;
-        overflow-y: auto;
-        box-shadow: -4px 0 12px rgba(0,0,0,0.08);
+    .contador {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--negro-texto);
+        min-width: 30px;
+        text-align: center;
     }
 
-    .panel-ticket h2 { color: var(--rojo-bekeenco); font-size: 1.3rem; margin-bottom: 1rem; border-bottom: 2px solid #E5E7EB; padding-bottom: 0.5rem; }
+    /* ===== PANEL DEL RESUMEN (CORREGIDO) ===== */
+    .panel-ticket {
+        position: sticky;
+        top: 90px;                 /* Debajo del navbar sticky */
+        background-color: var(--blanco-puro);
+        border-radius: 14px;
+        border: 1px solid #E5E7EB;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        max-height: calc(100vh - 110px);
+        overflow-y: auto;
+    }
 
-    .item-ticket { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px dashed #E5E7EB; font-size: 0.9rem; }
+    .panel-ticket h2 {
+        color: var(--rojo-bekeenco);
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #F3F4F6;
+        padding-bottom: 0.6rem;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .item-ticket {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px dashed #E5E7EB;
+        font-size: 0.88rem;
+    }
 
     .total-ticket {
-        display: flex; justify-content: space-between;
-        font-size: 1.5rem; font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.4rem;
+        font-weight: 700;
         color: var(--rojo-bekeenco);
-        margin-top: 1rem; padding-top: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
         border-top: 3px solid var(--rojo-bekeenco);
     }
 
-    .btn-cancelar {
-        background-color: #6B7280; color: white;
-        border: none; border-radius: 8px;
-        padding: 0.8rem; width: 100%;
-        font-size: 1rem; font-weight: 600;
-        cursor: pointer; margin-top: 1rem;
+    .btn-cobrar {
+        background: var(--rojo-bekeenco);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.9rem;
+        width: 100%;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: all 0.2s;
     }
 
-    .contenido-principal { margin-right: 360px; padding: 1rem; }
+    .btn-cobrar:hover {
+        background: var(--rojo-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3);
+    }
+
+    .btn-cancelar {
+        background-color: #6B7280;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem;
+        width: 100%;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 0.6rem;
+        transition: background 0.2s;
+    }
+
+    .btn-cancelar:hover { background-color: #4B5563; }
 
     .sin-productos {
         text-align: center;
@@ -107,114 +230,145 @@
     }
 
     .alert-error {
-        background: #FEE2E2; color: #B91C1C;
-        padding: 12px 16px; border-radius: 8px;
+        background: #FEE2E2;
+        color: #B91C1C;
+        padding: 12px 16px;
+        border-radius: 10px;
         border-left: 4px solid #B91C1C;
-        margin: 16px;
+        margin: 16px 0;
         font-size: 14px;
     }
 
     .alert-info {
-        background: #FEF3C7; color: #92400E;
-        padding: 12px 16px; border-radius: 8px;
+        background: #FEF3C7;
+        color: #92400E;
+        padding: 12px 16px;
+        border-radius: 10px;
         border-left: 4px solid #F59E0B;
-        margin: 16px;
+        margin: 16px 0;
         font-size: 14px;
+    }
+
+    @@media (max-width: 992px) {
+        .caja-wrapper {
+            grid-template-columns: 1fr;
+        }
+        .panel-ticket {
+            position: static;
+            max-height: none;
+        }
     }
 </style>
 
-<div class="contenido-principal">
-    <div class="header-caja">
-        <h1>🍜 BekeenCo - Caja</h1>
-        <span style="color: var(--gris-texto);">Selección por Unidad</span>
+<div class="caja-wrapper">
+
+    <!-- ===== COLUMNA IZQUIERDA: PRODUCTOS ===== -->
+    <div class="caja-main">
+        <div class="header-caja">
+            <h1><i class="bi bi-cash-register me-2"></i>BekeenCo - Caja</h1>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="/Calculadora/Index" class="btn-calculadora">
+                    <i class="bi bi-calculator"></i> Calculadora por Peso
+                </a>
+                <span class="badge bg-danger align-self-center">Selección por Unidad</span>
+            </div>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert-error">
+                <strong><i class="bi bi-exclamation-triangle me-1"></i> Error:</strong> @ViewBag.Error
+            </div>
+        }
+
+        @if (ViewBag.Mensaje != null)
+        {
+            <div class="alert-info">
+                <strong><i class="bi bi-info-circle me-1"></i> Info:</strong> @ViewBag.Mensaje
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="sin-productos">
+                <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                <p style="font-size: 1.1rem;">No hay productos disponibles en este momento.</p>
+                <p style="font-size: 0.9rem; margin-top: 12px;">
+                    Verifica que la API esté corriendo y que la tabla <strong>Productos</strong> tenga datos.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="grilla-productos">
+                @foreach (var producto in Model)
+                {
+                    <div class="tarjeta-producto"
+                         data-id="@producto.Id_producto"
+                         data-nombre="@producto.Nombre"
+                         data-precio="@producto.Precio_unitario.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                         data-stock="@producto.Stock_actual.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                        <div>
+                            <div class="nombre">@producto.Nombre</div>
+                            <div class="precio">Bs. @producto.Precio_unitario.ToString("F2")</div>
+                            <div class="stock">
+                                <i class="bi bi-box-seam me-1"></i>Stock: @producto.Stock_actual unidades
+                            </div>
+                        </div>
+                        <div class="controles">
+                            <button class="btn-control btn-restar" onclick="restarProducto(@producto.Id_producto)" disabled>
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            <span class="contador" id="contador-@producto.Id_producto">0</span>
+                            <button class="btn-control btn-sumar" onclick="sumarProducto(@producto.Id_producto)">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
     </div>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert-error">
-            <strong>⚠️ Error:</strong> @ViewBag.Error
-        </div>
-    }
-
-    @if (ViewBag.Mensaje != null)
-    {
-        <div class="alert-info">
-            <strong>ℹ️ Info:</strong> @ViewBag.Mensaje
-        </div>
-    }
-
-    @if (!Model.Any())
-    {
-        <div class="sin-productos">
-            <p style="font-size: 1.1rem;">No hay productos disponibles en este momento.</p>
-            <p style="font-size: 0.9rem; margin-top: 12px;">
-                Verifica que la API esté corriendo y que la tabla <strong>Productos</strong> tenga datos.
+    <!-- ===== COLUMNA DERECHA: RESUMEN ===== -->
+    <div class="panel-ticket">
+        @Html.AntiForgeryToken()
+        <h2><i class="bi bi-receipt me-2"></i>Resumen del Comprobante</h2>
+        <div id="lista-items">
+            <p style="color: var(--gris-texto); font-size: 0.9rem; text-align: center; padding: 16px 0;">
+                <i class="bi bi-cart-x fs-3 d-block mb-2"></i>
+                No hay productos seleccionados.
             </p>
         </div>
-    }
-    else
-    {
-        <div class="grilla-productos">
-            @foreach (var producto in Model)
-            {
-                <div class="tarjeta-producto"
-                     data-id="@producto.Id_producto"
-                     data-nombre="@producto.Nombre"
-                     data-precio="@producto.Precio_unitario.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                     data-stock="@producto.Stock_actual.ToString(System.Globalization.CultureInfo.InvariantCulture)">
-                    <div>
-                        <div class="nombre">@producto.Nombre</div>
-                        <div class="precio">Bs. @producto.Precio_unitario.ToString("F2")</div>
-                        <div class="stock">Stock: @producto.Stock_actual unidades</div>
-                    </div>
-                    <div class="controles">
-                        <button class="btn-control btn-restar" onclick="restarProducto(@producto.Id_producto)" disabled>−</button>
-                        <span class="contador" id="contador-@producto.Id_producto">0</span>
-                        <button class="btn-control btn-sumar" onclick="sumarProducto(@producto.Id_producto)">+</button>
-                    </div>
-                </div>
-            }
+        <div class="total-ticket">
+            <span>TOTAL:</span>
+            <span id="total-general">Bs. 0.00</span>
         </div>
-    }
-</div>
 
-<div class="panel-ticket">
-    @Html.AntiForgeryToken()
-    <h2>🧾 Resumen del Ticket</h2>
-    <div id="lista-items">
-        <p style="color: var(--gris-texto); font-size: 0.9rem;">No hay productos seleccionados.</p>
-    </div>
-    <div class="total-ticket">
-        <span>TOTAL:</span>
-        <span id="total-general">Bs. 0.00</span>
-    </div>
+        <div style="margin-top: 1rem;">
+            <label style="display:block; font-weight:600; margin-bottom:6px; color:#374151;">
+                <i class="bi bi-credit-card me-1"></i> Método de pago
+            </label>
+            <select id="metodo-pago" style="
+                width:100%; padding:10px;
+                border:2px solid #E60000; border-radius:10px;
+                font-size:1rem; font-weight:600;
+                color:#111827; background:#FFFFFF;">
+                <option value="Efectivo">💵 Efectivo</option>
+                <option value="QR">📱 QR</option>
+                <option value="Tarjeta">💳 Tarjeta</option>
+            </select>
+        </div>
 
-    <div style="margin-top: 1rem;">
-        <label style="display:block; font-weight:600; margin-bottom:6px; color:#374151;">
-            Método de pago
-        </label>
-        <select id="metodo-pago" style="
-            width:100%; padding:10px;
-            border:2px solid #E60000; border-radius:8px;
-            font-size:1rem; font-weight:600;
-            color:#111827; background:#FFFFFF;">
-            <option value="Efectivo">💵 Efectivo</option>
-            <option value="QR">📱 QR</option>
-            <option value="Tarjeta">💳 Tarjeta</option>
-        </select>
+        <button class="btn-cobrar" onclick="cobrarTicket()">
+            <i class="bi bi-check-circle me-1"></i> Cobrar e Imprimir Comprobante
+        </button>
+
+        <button class="btn-cancelar" onclick="cancelarTicket()">
+            <i class="bi bi-trash me-1"></i> Cancelar Ticket
+        </button>
     </div>
 
-    <button class="btn-cobrar" onclick="cobrarTicket()"
-            style="background:#E60000; color:white; border:none;
-                   border-radius:8px; padding:0.9rem; width:100%;
-                   font-size:1.1rem; font-weight:700; cursor:pointer;
-                   margin-top:1rem;">
-        ✅ Cobrar
-    </button>
-
-    <button class="btn-cancelar" onclick="cancelarTicket()">
-        🗑️ Cancelar Ticket
-    </button>
 </div>
 
 @section Scripts {
@@ -242,8 +396,6 @@
             carrito[id].cantidad++;
             actualizarUI(id);
             actualizarTicket();
-            // Nota: la validación contra el servidor se hace al momento de Cobrar
-            // (transacción atómica). No se llama aquí para evitar alertas innecesarias.
         }
 
         function restarProducto(id) {
@@ -273,7 +425,8 @@
             const items = Object.values(carrito);
 
             if (items.length === 0) {
-                listaItems.innerHTML = '<p style="color: var(--gris-texto); font-size: 0.9rem;">No hay productos seleccionados.</p>';
+                listaItems.innerHTML = `<p style="color: var(--gris-texto); font-size: 0.9rem; text-align: center; padding: 16px 0;">
+                    <i class="bi bi-cart-x fs-3 d-block mb-2"></i>No hay productos seleccionados.</p>`;
                 totalGeneral.textContent = 'Bs. 0.00';
                 return;
             }
@@ -342,7 +495,7 @@
                 }
 
                 if (data.exito) {
-                    alert('✅ Venta procesada. Generando ticket...');
+                    alert('✅ Venta procesada. Generando comprobante...');
                     window.location.href = `/Caja/Ticket/${data.idVenta}`;
                 } else {
                     const mensajeError = data.mensaje || data.message || JSON.stringify(data) || 'Error desconocido';

@@ -4,27 +4,26 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace KoreanStoreMvc.Filters
 {
     /// <summary>
-    /// Sprint 3 - HU-10 (Jorge Mercado Calcina).
-    /// Permite el acceso solo a usuarios con sesión activa y rol "Cliente".
+    /// Filtro que requiere que el usuario tenga rol "Cliente".
+    /// Si no está logueado o no es Cliente, redirige al Login o AccesoDenegado.
     /// </summary>
     public class ClienteRequiredAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var httpContext = context.HttpContext;
-            var userId = httpContext.Session.GetInt32("UserId");
-            var userRole = httpContext.Session.GetString("UserRole");
+            var userId = context.HttpContext.Session.GetInt32("UserId");
+            var userRole = context.HttpContext.Session.GetString("UserRole");
 
-            // 1. Sin sesión → al login
             if (userId == null)
             {
+                // No está logueado → redirigir al Login
                 context.Result = new RedirectToActionResult("Login", "Account", null);
                 return;
             }
 
-            // 2. Con sesión pero sin rol Cliente → acceso denegado
-            if (string.IsNullOrEmpty(userRole) || userRole != "Cliente")
+            if (userRole != "Cliente")
             {
+                // Está logueado pero no es Cliente → Acceso Denegado
                 context.Result = new RedirectToActionResult("AccesoDenegado", "Account", null);
                 return;
             }
