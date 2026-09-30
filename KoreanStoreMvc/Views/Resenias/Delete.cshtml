@@ -1,0 +1,147 @@
+@model KoreanStoreMvc.Models.ReseñaModel
+@{
+    ViewData["Title"] = "Eliminar Reseña";
+    var producto = ViewBag.Producto as KoreanStoreMvc.Models.ProductoModel;
+}
+
+<div class="delete-container">
+    <div class="delete-card">
+        <div class="delete-icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h1>¿Eliminar esta reseña?</h1>
+        <p class="delete-subtitle">Esta acción no se puede deshacer.</p>
+
+        @if (producto != null)
+        {
+            <div class="producto-info">
+                <h3>@producto.Nombre</h3>
+            </div>
+        }
+
+        <div class="resena-preview">
+            <div class="estrellas">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <span class="@(i <= Model.Calificacion ? "activa" : "vacia")">★</span>
+                }
+            </div>
+            <p class="comentario">"@Model.Comentario"</p>
+            <p class="fecha">@Model.Fecha.ToLocalTime().ToString("dd/MM/yyyy")</p>
+        </div>
+
+        <form asp-action="DeleteConfirmed" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <input type="hidden" name="productoId" value="@Model.Id_producto" />
+
+            <div class="acciones">
+                <button type="submit" class="btn-confirmar">
+                    <i class="bi bi-trash me-1"></i> Sí, eliminar
+                </button>
+                <a asp-action="PorProducto" asp-route-id="@Model.Id_producto" class="btn-cancelar">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .delete-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 0 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .delete-card {
+        background: white;
+        border-radius: 18px;
+        padding: 2.5rem;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .delete-icon {
+        font-size: 3rem;
+        color: #E60000;
+        margin-bottom: 1rem;
+    }
+
+    .delete-card h1 {
+        color: #111827;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .delete-subtitle {
+        color: #6B7280;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .producto-info {
+        background: #FEF2F2;
+        border-left: 4px solid #E60000;
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        text-align: left;
+    }
+
+    .producto-info h3 {
+        color: #E60000;
+        font-size: 1rem;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .resena-preview {
+        background: #F9FAFB;
+        padding: 1.2rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+
+    .estrellas { color: #F59E0B; font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .estrellas .vacia { color: #D1D5DB; }
+
+    .comentario {
+        color: #374151;
+        font-style: italic;
+        margin: 0.5rem 0;
+        font-size: 0.95rem;
+    }
+
+    .fecha { color: #9CA3AF; font-size: 0.8rem; margin: 0; }
+
+    .acciones { display: flex; gap: 10px; }
+
+    .btn-confirmar, .btn-cancelar {
+        flex: 1;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        border: none;
+        transition: all 0.2s;
+    }
+
+    .btn-confirmar {
+        background: #E60000;
+        color: white;
+    }
+    .btn-confirmar:hover { background: #B80000; color: white; }
+
+    .btn-cancelar {
+        background: white;
+        color: #6B7280;
+        border: 2px solid #E5E7EB;
+    }
+    .btn-cancelar:hover { border-color: #E60000; color: #E60000; }
+</style>
