@@ -1,0 +1,37 @@
+using KoreanStoreMvc.Filters;
+using KoreanStoreMvc.Models;  // ← Necesario para ReporteVentasModel
+using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Json;
+
+namespace KoreanStoreMvc.Controllers
+{
+    [SessionRequired]
+    public class ReportesController : Controller
+    {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ReportesController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var client = _httpClientFactory.CreateClient("KoreanStoreAPI");
+
+            try
+            {
+                var reporte = await client.GetFromJsonAsync<ReporteVentasModel>(
+                    "api/reportes/ventas-diarias"
+                );
+
+                return View(reporte);
+            }
+            catch
+            {
+                return View(new ReporteVentasModel());
+            }
+        }
+    }
+    // ⚠️ LA CLASE ReporteVentasModel YA NO VA AQUÍ
+}
